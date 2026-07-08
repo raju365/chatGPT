@@ -2,8 +2,8 @@ const userModel = require("../models/user.model");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 async function registerUser(req, res) {
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+  console.log("Headers:", req.headers);
+  console.log("Body:", req.body);
   const {
     fullName: { firstName, lastName },
     email,
@@ -21,7 +21,7 @@ async function registerUser(req, res) {
     password: hashedPassword,
   });
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.cookie("token", token,{
+  res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
   });
@@ -39,14 +39,14 @@ async function loginUser(req, res) {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email });
   if (!user) {
-   return res.status(400).json({ message: "Invalid email or password" });
+    return res.status(400).json({ message: "Invalid email or password" });
   }
   const isPasswordValid = await bycrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.cookie("token", token,{
+  res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
   });
