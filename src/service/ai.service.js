@@ -4,10 +4,10 @@ const ai = new GoogleGenAI({});
 
 async function generateResponse(content) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.5-flash",
     contents: content,
   });
-  return response;
+  return response.text;
 }
 module.exports = {
   generateResponse,

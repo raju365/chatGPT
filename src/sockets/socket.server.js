@@ -3,6 +3,7 @@ const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const aiService = require("../service/ai.service");
+const messageModel = require("../models/message.model");
 
 function initSocketServer(httpServer) {
   const io = new Server(httpServer, {});
@@ -10,7 +11,7 @@ function initSocketServer(httpServer) {
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
 
     if (!cookies.token) {
-      next(new Error("Authentication error: no token provided"));
+      return next(new Error("Authentication error: no token provided"));
     }
 
     try {
@@ -27,9 +28,37 @@ function initSocketServer(httpServer) {
     socket.on("ai-message", async (messagePayload) => {
       try {
         console.log("Received ai-message:", messagePayload);
+
+        await messageModel.create({
+          user: socket.user._id,
+          chat: messagePayload.chat,
+          content: messagePayload.content,
+          role: "user",
+        });
+
+        const chatHistory = await messageModel
+          .find({
+            chat: messagePayload.chat,
+          })
+          .sort({ createdAt: 1 })
+          .limit(20)
+          .lean()
+          .reverse();
+
         const response = await aiService.generateResponse(
-          messagePayload.content,
+          chatHistory.map((item) => { 
+            return {
+              role: item.role, 
+              content: [{text: item.content}] 
+            };
+          }),
         );
+        await messageModel.create({
+          chat: messagePayload.chat,
+          user: socket.user._id,
+          content: response,
+          role: "model",
+        });
 
         socket.emit("ai-response", {
           content: response,
