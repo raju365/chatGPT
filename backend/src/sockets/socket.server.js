@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const aiService = require("../service/ai.service");
 const messageModel = require("../models/message.model");
+const { createMemory, queryMemory } = require("../service/vector.service");
 
 function initSocketServer(httpServer) {
   // Initialize Socket.IO server with HTTP server
@@ -12,6 +13,7 @@ function initSocketServer(httpServer) {
   io.use(async (socket, next) => {
     // Parse cookies from socket handshake request
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
+
     // Check if JWT token exists
     if (!cookies.token) {
       return next(new Error("Authentication error: no token provided"));
@@ -20,13 +22,16 @@ function initSocketServer(httpServer) {
     try {
       // Verify JWT token
       const decoded = jwt.verify(cookies.token, process.env.JWT_SECRET);
+
       // Find user from database
       const user = await userModel.findById(decoded.id);
+
       // Attach authenticated user to socket object
       socket.user = user;
       // Allow socket connection
       next();
     } catch (error) {
+      console.log(error);
       // Invalid or expired token
       next(new Error("Authentication error: invalid token"));
     }
@@ -37,13 +42,35 @@ function initSocketServer(httpServer) {
     socket.on("ai-message", async (messagePayload) => {
       try {
         console.log("Received ai-message:", messagePayload);
+
         // Save user's message into database
-        await messageModel.create({
-          user: socket.user._id,
+        const message = await messageModel.create({
           chat: messagePayload.chat,
+          user: socket.user._id,
           content: messagePayload.content,
           role: "user",
         });
+
+        const vectors = await aiService.generateVector(messagePayload.content);
+
+        const memory = await queryMemory({
+          queryVector: vectors,
+          limit: 3,
+          metadata: {},
+        });
+        
+        await createMemory({
+          vectors,
+          messageId: message._id,
+          metadata: {
+            chat: messagePayload.chat,
+            user: socket.user._id,
+            text: messagePayload.content,
+          },
+        });
+
+        console.log(memory);
+
         // Fetch previous chat history
         // Sort -> Oldest to Newest
         // Limit -> Last 20 messages
@@ -55,24 +82,41 @@ function initSocketServer(httpServer) {
           })
           .sort({ createdAt: 1 })
           .limit(20)
-          .lean()
-          .reverse();
+          .lean();
+        chatHistory.reverse();
+
         // Convert database messages into Gemini compatible format
         const response = await aiService.generateResponse(
-          chatHistory.map((item) => {
-            return {
-              role: item.role,
-              content: [{ text: item.content }],
-            };
-          }),
+          chatHistory.map((item) => ({
+            role: item.role,
+            parts: [
+              {
+                text: item.content,
+              },
+            ],
+          })),
         );
+
         // Save AI response into database
-        await messageModel.create({
+        const responseMessage = await messageModel.create({
           chat: messagePayload.chat,
           user: socket.user._id,
           content: response,
           role: "model",
         });
+
+        // Save AI response into vector database
+        const responseVector = await aiService.generateVector(response);
+        await createMemory({
+          vectors: responseVector,
+          messageId: responseMessage._id,
+          metadata: {
+            chat: messagePayload.chat,
+            user: socket.user._id,
+            text: response,
+          },
+        });
+
         // Send AI response back to frontend
         socket.emit("ai-response", {
           content: response,
@@ -88,4 +132,5 @@ function initSocketServer(httpServer) {
     });
   });
 }
+
 module.exports = initSocketServer;

@@ -22,7 +22,7 @@ async function registerUser(req, res) {
     email,
     password,
   } = req.body;
-// Check if user already exists
+  // Check if user already exists
   const isUserAlreadyExist = await userModel.findOne({ email });
 
   if (isUserAlreadyExist) {
@@ -38,12 +38,12 @@ async function registerUser(req, res) {
   });
   // Generate JWT token
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-   // Store token inside HTTP only cookie
+  // Store token inside HTTP only cookie
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
   });
- // Send success response
+  // Send success response
   res.status(201).json({
     message: "User registered successfully",
     user: {
@@ -57,21 +57,22 @@ async function registerUser(req, res) {
  * Login existing user
  */
 async function loginUser(req, res) {
-   // Extract login credentials
+  // Extract login credentials
   const { email, password } = req.body;
-   // Find user using email
-  const user = await userModel.findOne({ email });
+  // Find user using email
+  const user = await userModel.findOne({ email }).select("+password");
+  
   // User not found
   if (!user) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
-   // Compare entered password with hashed password
+  // Compare entered password with hashed password
   const isPasswordValid = await bycrypt.compare(password, user.password);
-   // Password mismatch
+  // Password mismatch
   if (!isPasswordValid) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
-   // Generate JWT token
+  // Generate JWT token
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   // Store token in HTTP only cookie
   res.cookie("token", token, {
