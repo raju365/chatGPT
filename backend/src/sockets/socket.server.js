@@ -53,12 +53,15 @@ function initSocketServer(httpServer) {
 
         const vectors = await aiService.generateVector(messagePayload.content);
 
+        //long term memory
         const memory = await queryMemory({
           queryVector: vectors,
           limit: 3,
-          metadata: {},
+          metadata: {
+            user:socket.user._id
+          },
         });
-        
+
         await createMemory({
           vectors,
           messageId: message._id,
@@ -69,8 +72,6 @@ function initSocketServer(httpServer) {
           },
         });
 
-        console.log(memory);
-
         // Fetch previous chat history
         // Sort -> Oldest to Newest
         // Limit -> Last 20 messages
@@ -80,22 +81,36 @@ function initSocketServer(httpServer) {
           .find({
             chat: messagePayload.chat,
           })
-          .sort({ createdAt: 1 })
+          .sort({ createdAt: -1 })
           .limit(20)
           .lean();
-        chatHistory.reverse();
+          chatHistory.reverse();
 
-        // Convert database messages into Gemini compatible format
-        const response = await aiService.generateResponse(
-          chatHistory.map((item) => ({
+        const stm = chatHistory.map((item) => {
+          return {
             role: item.role,
+            parts: [{ text: item.content }],
+          };
+        });
+
+        const ltm = [
+          {
+            role: "user",
             parts: [
               {
-                text: item.content,
+                text: `
+                these are some previous messages from the chat, use them to generate a response
+                ${(memory || []).map((item) => item.metadata.text).filter(Boolean).join("\n")}
+                `,
               },
             ],
-          })),
-        );
+          },
+        ];
+        console.log(ltm[0])
+        console.log(stm)
+
+        // Convert database messages into Gemini compatible format
+        const response = await aiService.generateResponse([...ltm, ...stm]);
 
         // Save AI response into database
         const responseMessage = await messageModel.create({

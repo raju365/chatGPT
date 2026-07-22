@@ -11,7 +11,7 @@ const ai = new GoogleGenAI({});
 async function generateResponse(content) {
   // Send conversation history to Gemini
   const response = await ai.models.generateContent({
-    model: "gemini-3.5-flash",
+    model: "gemini-3.6-flash",
     contents: content,
   });
   // Return only the generated text
