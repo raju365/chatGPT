@@ -36,13 +36,14 @@ function initSocketServer(httpServer) {
       next(new Error("Authentication error: invalid token"));
     }
   });
+
   // Fired whenever a new socket connection is established
   io.on("connection", (socket) => {
     // Listen for user message event
     socket.on("ai-message", async (messagePayload) => {
       try {
         console.log("Received ai-message:", messagePayload);
-
+        /*
         // Save user's message into database
         const message = await messageModel.create({
           chat: messagePayload.chat,
@@ -52,23 +53,34 @@ function initSocketServer(httpServer) {
         });
 
         const vectors = await aiService.generateVector(messagePayload.content);
-
+*/
+        const [message, vectors] = await Promise.all([
+          messageModel.create({
+            chat: messagePayload.chat,
+            user: socket.user._id,
+            content: messagePayload.content,
+            role: "user",
+          }),
+          aiService.generateVector(messagePayload.content),
+        ]);
+        await createMemory({
+          vectors,
+          messageId: message._id,
+          metadata: {
+            chat: messagePayload.chat.toString(),
+            user: socket.user._id.toString(),
+            text: messagePayload.content,
+          },
+        });
+        /*
         //long term memory
         const memory = await queryMemory({
           queryVector: vectors,
           limit: 3,
           metadata: {
-            user:socket.user._id
-          },
-        });
-
-        await createMemory({
-          vectors,
-          messageId: message._id,
-          metadata: {
-            chat: messagePayload.chat,
-            user: socket.user._id,
-            text: messagePayload.content,
+            user: {
+              $eq: socket.user._id.toString(),
+            },
           },
         });
 
@@ -84,7 +96,27 @@ function initSocketServer(httpServer) {
           .sort({ createdAt: -1 })
           .limit(20)
           .lean();
-          chatHistory.reverse();
+        chatHistory.reverse();
+*/
+        const [memory, chatHistory] = await Promise.all([
+          queryMemory({
+            queryVector: vectors,
+            limit: 3,
+            metadata: {
+              user: {
+                $eq: socket.user._id.toString(),
+              },
+            },
+          }),
+          messageModel
+            .find({
+              chat: messagePayload.chat,
+            })
+            .sort({ createdAt: -1 })
+            .limit(20)
+            .lean()
+            .then((message) => message.reverse()),
+        ]);
 
         const stm = chatHistory.map((item) => {
           return {
@@ -100,18 +132,22 @@ function initSocketServer(httpServer) {
               {
                 text: `
                 these are some previous messages from the chat, use them to generate a response
-                ${(memory || []).map((item) => item.metadata.text).filter(Boolean).join("\n")}
+                ${(memory || [])
+                  .map((item) => item.metadata.text)
+                  .filter(Boolean)
+                  .join("\n")}
                 `,
               },
             ],
           },
         ];
-        console.log(ltm[0])
-        console.log(stm)
+        console.log(ltm[0]);
+        console.log(stm);
 
         // Convert database messages into Gemini compatible format
         const response = await aiService.generateResponse([...ltm, ...stm]);
 
+        /*
         // Save AI response into database
         const responseMessage = await messageModel.create({
           chat: messagePayload.chat,
@@ -122,20 +158,31 @@ function initSocketServer(httpServer) {
 
         // Save AI response into vector database
         const responseVector = await aiService.generateVector(response);
-        await createMemory({
-          vectors: responseVector,
-          messageId: responseMessage._id,
-          metadata: {
-            chat: messagePayload.chat,
-            user: socket.user._id,
-            text: response,
-          },
-        });
+        */
 
         // Send AI response back to frontend
         socket.emit("ai-response", {
           content: response,
           chat: messagePayload.chat,
+        });
+        const [responseMessage, responseVector] = await Promise.all([
+          messageModel.create({
+            chat: messagePayload.chat,
+            user: socket.user._id,
+            content: response,
+            role: "model",
+          }),
+          aiService.generateVector(response),
+        ]);
+
+        await createMemory({
+          vectors: responseVector,
+          messageId: responseMessage._id,
+          metadata: {
+            chat: messagePayload.chat.toString(),
+            user: socket.user._id.toString(),
+            text: response,
+          },
         });
       } catch (error) {
         console.error("Error generating AI response:", error.message);

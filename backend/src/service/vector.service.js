@@ -11,25 +11,23 @@ const pc = new Pinecone({
 const cohortChatGptIndex = pc.Index("cohort-chatgpt");
 
 async function createMemory({ vectors, metadata, messageId }) {
-    console.log("Message ID:", messageId);
-console.log("Vector Length:", vectors?.length);
-console.log("Metadata:", metadata);
- await cohortChatGptIndex.upsert({
-  records: [
-    {
-      id: messageId,
-      values: vectors,
-      metadata,
-    },
-  ],
-});
+
+  await cohortChatGptIndex.upsert({
+    records: [
+      {
+        id: messageId,
+        values: vectors,
+        metadata,
+      },
+    ],
+  });
 }
 async function queryMemory({ queryVector, limit = 5, metadata }) {
   const data = await cohortChatGptIndex.query({
     vector: queryVector,
     topK: limit,
-    filter: metadata ? { metadata } : undefined,
     includeMetadata: true,
+    filter: metadata,
   });
   return data.matches;
 }
