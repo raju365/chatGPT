@@ -1,59 +1,87 @@
+/*
+ * ------------------------------------------------------------
+ * File        : socket.server.js
+ * Description : Initializes Socket.IO, authenticates users,
+ *               handles AI conversations, and manages
+ *               long-term memory with Pinecone.
+ * Author      : Raju Barman
+ * ------------------------------------------------------------
+ */
+
 const { Server } = require("socket.io");
 const cookie = require("cookie");
 const jwt = require("jsonwebtoken");
+
 const userModel = require("../models/user.model");
-const aiService = require("../service/ai.service");
 const messageModel = require("../models/message.model");
+
+const aiService = require("../service/ai.service");
 const { createMemory, queryMemory } = require("../service/vector.service");
 
+/*
+ * Initialize Socket.IO server.
+ * @param {import("http").Server} httpServer
+ */
 function initSocketServer(httpServer) {
-  // Initialize Socket.IO server with HTTP server
-  const io = new Server(httpServer, {});
-  // Middleware: Authenticate user before socket connection
+  // Create Socket.IO server
+  const io = new Server(httpServer, {
+    cors: {
+      origin: ["http://localhost:5173", "https://your-frontend.vercel.app"],
+      credentials: true,
+    },
+  });
+
+  // Authenticate every socket connection
   io.use(async (socket, next) => {
-    // Parse cookies from socket handshake request
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
 
-    // Check if JWT token exists
     if (!cookies.token) {
       return next(new Error("Authentication error: no token provided"));
     }
 
     try {
-      // Verify JWT token
       const decoded = jwt.verify(cookies.token, process.env.JWT_SECRET);
 
-      // Find user from database
       const user = await userModel.findById(decoded.id);
 
-      // Attach authenticated user to socket object
+      if (!user) {
+        return next(new Error("User not found"));
+      }
+
       socket.user = user;
-      // Allow socket connection
+
       next();
     } catch (error) {
-      console.log(error);
-      // Invalid or expired token
+      console.error(error);
+
       next(new Error("Authentication error: invalid token"));
     }
   });
 
-  // Fired whenever a new socket connection is established
+  // Handle client connection
   io.on("connection", (socket) => {
-    // Listen for user message event
+    console.log(`✅ User connected : ${socket.id}`);
+
+    socket.on("disconnect", () => {
+      console.log(`❌ User disconnected : ${socket.id}`);
+    });
+
+    /**
+     * AI Conversation Flow
+     * 1. Save user message
+     * 2. Generate embedding
+     * 3. Store memory in Pinecone
+     * 4. Retrieve STM + LTM
+     * 5. Generate AI response
+     * 6. Send response
+     * 7. Save AI response
+     * 8. Store AI response in Pinecone
+     */
     socket.on("ai-message", async (messagePayload) => {
       try {
         console.log("Received ai-message:", messagePayload);
-        /*
-        // Save user's message into database
-        const message = await messageModel.create({
-          chat: messagePayload.chat,
-          user: socket.user._id,
-          content: messagePayload.content,
-          role: "user",
-        });
 
-        const vectors = await aiService.generateVector(messagePayload.content);
-*/
+        // Save message and generate embedding
         const [message, vectors] = await Promise.all([
           messageModel.create({
             chat: messagePayload.chat,
@@ -63,6 +91,7 @@ function initSocketServer(httpServer) {
           }),
           aiService.generateVector(messagePayload.content),
         ]);
+
         await createMemory({
           vectors,
           messageId: message._id,
@@ -72,32 +101,8 @@ function initSocketServer(httpServer) {
             text: messagePayload.content,
           },
         });
-        /*
-        //long term memory
-        const memory = await queryMemory({
-          queryVector: vectors,
-          limit: 3,
-          metadata: {
-            user: {
-              $eq: socket.user._id.toString(),
-            },
-          },
-        });
 
-        // Fetch previous chat history
-        // Sort -> Oldest to Newest
-        // Limit -> Last 20 messages
-        // Lean -> Return plain JavaScript objects
-        // Reverse -> Reverse array order
-        const chatHistory = await messageModel
-          .find({
-            chat: messagePayload.chat,
-          })
-          .sort({ createdAt: -1 })
-          .limit(20)
-          .lean();
-        chatHistory.reverse();
-*/
+        // Retrieve long-term memory and recent chat history
         const [memory, chatHistory] = await Promise.all([
           queryMemory({
             queryVector: vectors,
@@ -115,56 +120,44 @@ function initSocketServer(httpServer) {
             .sort({ createdAt: -1 })
             .limit(20)
             .lean()
-            .then((message) => message.reverse()),
+            .then((messages) => messages.reverse()),
         ]);
 
-        const stm = chatHistory.map((item) => {
-          return {
-            role: item.role,
-            parts: [{ text: item.content }],
-          };
-        });
+        // Build short-term memory (STM)
+        const stm = chatHistory.map((item) => ({
+          role: item.role,
+          parts: [{ text: item.content }],
+        }));
 
+        // Build long-term memory (LTM)
         const ltm = [
           {
             role: "user",
             parts: [
               {
                 text: `
-                these are some previous messages from the chat, use them to generate a response
-                ${(memory || [])
-                  .map((item) => item.metadata.text)
-                  .filter(Boolean)
-                  .join("\n")}
+these are some previous messages from the chat, use them to generate a response
+
+${(memory || [])
+  .map((item) => item.metadata.text)
+  .filter(Boolean)
+  .join("\n")}
                 `,
               },
             ],
           },
         ];
-        console.log(ltm[0]);
-        console.log(stm);
 
-        // Convert database messages into Gemini compatible format
+        // Generate AI response
         const response = await aiService.generateResponse([...ltm, ...stm]);
 
-        /*
-        // Save AI response into database
-        const responseMessage = await messageModel.create({
-          chat: messagePayload.chat,
-          user: socket.user._id,
-          content: response,
-          role: "model",
-        });
-
-        // Save AI response into vector database
-        const responseVector = await aiService.generateVector(response);
-        */
-
-        // Send AI response back to frontend
+        // Send response immediately
         socket.emit("ai-response", {
           content: response,
           chat: messagePayload.chat,
         });
+
+        // Save AI response and embedding
         const [responseMessage, responseVector] = await Promise.all([
           messageModel.create({
             chat: messagePayload.chat,
@@ -185,8 +178,9 @@ function initSocketServer(httpServer) {
           },
         });
       } catch (error) {
-        console.error("Error generating AI response:", error.message);
-        // Notify frontend about AI failure
+        console.error("AI Error:", error.message);
+
+        // Notify client about failure
         socket.emit("ai-error", {
           message: "Failed to generate AI response",
         });
