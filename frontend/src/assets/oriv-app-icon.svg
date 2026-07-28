@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1024"
+     height="1024"
+     viewBox="0 0 1024 1024">
+
+<defs>
+
+<linearGradient id="bg"
+x1="0%" y1="0%"
+x2="100%" y2="100%">
+
+<stop offset="0%" stop-color="#8B5CF6"/>
+<stop offset="100%" stop-color="#4F46E5"/>
+
+</linearGradient>
+
+<linearGradient id="icon"
+x1="0%" y1="0%"
+x2="100%" y2="100%">
+
+<stop offset="0%" stop-color="#E879F9"/>
+<stop offset="100%" stop-color="#FFFFFF"/>
+
+</linearGradient>
+
+</defs>
+
+<!-- Background -->
+
+<rect
+width="1024"
+height="1024"
+rx="240"
+fill="#09090B"/>
+
+<!-- Glow -->
+
+<circle
+cx="512"
+cy="512"
+r="280"
+fill="url(#bg)"
+opacity=".18"/>
+
+<!-- Bubble -->
+
+<path
+d="
+M512 180
+C332 180 190 315 190 490
+C190 665 332 800 512 800
+C560 800 605 792 648 775
+
+L760 815
+
+L724 705
+
+C795 645 834 572 834 490
+
+C834 315 692 180 512 180Z"
+
+fill="url(#bg)"/>
+
+<!-- Center -->
+
+<circle
+cx="512"
+cy="490"
+r="150"
+fill="#09090B"/>
+
+<!-- Spark -->
+
+<path
+
+d="
+M512 390
+L532 455
+L597 475
+L532 495
+L512 560
+L492 495
+L427 475
+L492 455
+Z"
+
+fill="url(#icon)"/>
+
+<!-- Mini Spark -->
+
+<path
+
+d="
+M645 330
+L653 350
+L673 358
+L653 366
+L645 386
+L637 366
+L617 358
+L637 350
+Z"
+
+fill="#FFFFFF"/>
+
+</svg>

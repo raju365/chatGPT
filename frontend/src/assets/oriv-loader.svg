@@ -1,0 +1,68 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="120"
+    height="120"
+    viewBox="0 0 120 120"
+    fill="none">
+
+    <defs>
+
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#C45CFF"/>
+            <stop offset="100%" stop-color="#4F46E5"/>
+        </linearGradient>
+
+    </defs>
+
+    <!-- Outer Ring -->
+    <circle
+        cx="60"
+        cy="60"
+        r="42"
+        stroke="url(#grad)"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-dasharray="200"
+        stroke-dashoffset="100">
+
+        <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            dur="2s"
+            repeatCount="indefinite"/>
+
+    </circle>
+
+    <!-- Star -->
+
+    <path
+        d="M60 38
+           L66 55
+           L83 60
+           L66 65
+           L60 82
+           L54 65
+           L37 60
+           L54 55Z"
+        fill="url(#grad)">
+
+        <animate
+            attributeName="opacity"
+            values="0.4;1;0.4"
+            dur="1.4s"
+            repeatCount="indefinite"/>
+
+        <animateTransform
+            attributeName="transform"
+            type="scale"
+            values="1;1.12;1"
+            additive="sum"
+            dur="1.4s"
+            repeatCount="indefinite"/>
+
+    </path>
+
+</svg>

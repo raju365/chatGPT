@@ -1,0 +1,140 @@
+import { createContext, useContext, useState } from "react";
+import socket from "../lib/socket";
+import { createChat, getChats } from "../services/chat.service";
+
+import { useEffect } from "react";
+
+const ChatContext = createContext();
+
+export const ChatProvider = ({ children }) => {
+  const [messages, setMessages] = useState([]);
+
+  const [activeChat, setActiveChat] = useState(null);
+
+  const [chats, setChats] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const [typing, setTyping] = useState(false);
+
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("✅ Socket Connected:", socket.id);
+    });
+
+    socket.on("ai-response", (data) => {
+      setTyping(false);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "model",
+          content: data.content,
+        },
+      ]);
+    });
+
+    socket.on("ai-error", (err) => {
+      setTyping(false);
+      console.error(err.message);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("ai-response");
+      socket.off("ai-error");
+      socket.disconnect();
+    };
+  }, []);
+  useEffect(() => {
+    async function fetchChats() {
+      try {
+        const data = await getChats();
+
+        setChats(data.chats);
+
+        // Agar chats hain to pehli chat active kar do
+        if (data.chats.length > 0) {
+          setActiveChat(data.chats[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    }
+
+    fetchChats();
+  }, []);
+  
+  useEffect(() => {
+    console.log("Active chat changed:", activeChat);
+  }, [activeChat]);
+
+  const handleCreateChat = async () => {
+    try {
+      setLoading(true);
+
+      const data = await createChat("New Chat");
+      console.log("Created Chat:", data.chat);
+      setChats((prev) => [...prev, data.chat]);
+      setActiveChat(data.chat);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const sendMessage = (content) => {
+    console.log("sendMessage called");
+    console.log(content);
+    console.log("Active Chat:", activeChat);
+    if (!activeChat) {
+      console.warn("No active chat selected");
+      return;
+    }
+
+    // User message UI me turant show hoga
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        content,
+      },
+    ]);
+
+    setTyping(true);
+
+    socket.emit("ai-message", {
+      chat: activeChat.id,
+      content,
+    });
+  };
+  return (
+    <ChatContext.Provider
+      value={{
+        messages,
+        setMessages,
+
+        chats,
+        setChats,
+
+        activeChat,
+        setActiveChat,
+
+        loading,
+        setLoading,
+
+        typing,
+        setTyping,
+
+        handleCreateChat,
+        sendMessage,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};
+
+export const useChat = () => useContext(ChatContext);

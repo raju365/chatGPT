@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="900"
+     height="220"
+     viewBox="0 0 900 220"
+     fill="none">
+
+  <defs>
+
+    <linearGradient id="orivGradient"
+        x1="0%"
+        y1="0%"
+        x2="100%"
+        y2="100%">
+      <stop offset="0%" stop-color="#C45CFF"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+  </defs>
+
+  <!-- ===================== -->
+  <!-- LOGO ICON -->
+  <!-- ===================== -->
+
+  <g transform="translate(10 15)">
+
+    <path
+      d="M90 10
+      C45 10 10 45 10 90
+      C10 135 45 170 90 170
+      C104 170 118 167 130 161
+      L163 173
+      L153 142
+      C170 127 180 109 180 90
+      C180 45 145 10 90 10Z"
+      fill="url(#orivGradient)"
+      filter="url(#glow)"
+    />
+
+    <circle
+      cx="90"
+      cy="90"
+      r="48"
+      fill="#0B0B0F"
+    />
+
+    <!-- Main Star -->
+
+    <path
+      d="
+      M90 56
+      L98 82
+      L124 90
+      L98 98
+      L90 124
+      L82 98
+      L56 90
+      L82 82
+      Z"
+      fill="url(#orivGradient)"
+    />
+
+    <!-- Small Star -->
+
+    <path
+      d="
+      M130 42
+      L134 52
+      L144 56
+      L134 60
+      L130 70
+      L126 60
+      L116 56
+      L126 52
+      Z"
+      fill="url(#orivGradient)"
+    />
+
+  </g>
+
+  <!-- ===================== -->
+  <!-- TEXT -->
+  <!-- ===================== -->
+
+  <text
+      x="220"
+      y="110"
+      font-family="Poppins, Inter, sans-serif"
+      font-size="82"
+      font-weight="700"
+      fill="#FFFFFF">
+
+      Oriv
+  </text>
+
+  <text
+      x="465"
+      y="110"
+      font-family="Poppins, Inter, sans-serif"
+      font-size="82"
+      font-weight="700"
+      fill="url(#orivGradient)">
+
+      AI
+  </text>
+
+  <!-- TAGLINE -->
+
+  <line
+      x1="220"
+      y1="145"
+      x2="270"
+      y2="145"
+      stroke="#A855F7"
+      stroke-width="3"/>
+
+  <text
+      x="285"
+      y="153"
+      font-family="Inter, sans-serif"
+      font-size="22"
+      fill="#A1A1AA"
+      letter-spacing="2">
+
+      YOUR INTELLIGENT AI ASSISTANT
+
+  </text>
+
+  <line
+      x1="760"
+      y1="145"
+      x2="820"
+      y2="145"
+      stroke="#4F46E5"
+      stroke-width="3"/>
+
+</svg>

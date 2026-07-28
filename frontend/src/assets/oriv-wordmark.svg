@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="700"
+     height="140"
+     viewBox="0 0 700 140"
+     fill="none">
+
+  <defs>
+    <linearGradient id="textGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="100%">
+
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+
+    </linearGradient>
+  </defs>
+
+  <!-- Brand Name -->
+
+  <text
+      x="20"
+      y="70"
+      font-family="Inter, Poppins, sans-serif"
+      font-size="64"
+      font-weight="700"
+      fill="#FFFFFF">
+
+      Oriv
+
+  </text>
+
+  <text
+      x="205"
+      y="70"
+      font-family="Inter, Poppins, sans-serif"
+      font-size="64"
+      font-weight="700"
+      fill="url(#textGradient)">
+
+      AI
+
+  </text>
+
+  <!-- Tagline -->
+
+  <text
+      x="22"
+      y="108"
+      font-family="Inter, sans-serif"
+      font-size="18"
+      letter-spacing="2"
+      fill="#9CA3AF">
+
+      YOUR INTELLIGENT AI ASSISTANT
+
+  </text>
+
+</svg>

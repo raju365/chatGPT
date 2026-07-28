@@ -1,0 +1,73 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="512"
+    height="512"
+    viewBox="0 0 512 512"
+    fill="none"
+>
+
+<defs>
+
+<linearGradient id="orivGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#C45CFF"/>
+    <stop offset="100%" stop-color="#4F46E5"/>
+</linearGradient>
+
+</defs>
+
+<!-- Speech Bubble -->
+
+<path
+d="M256 56
+C145 56 56 140 56 244
+C56 348 145 432 256 432
+C287 432 317 425 343 412
+L414 438
+L392 370
+C432 335 456 292 456 244
+C456 140 367 56 256 56Z"
+fill="url(#orivGradient)"
+/>
+
+<!-- Inner Circle -->
+
+<circle
+cx="256"
+cy="244"
+r="118"
+fill="#0B0B0F"
+/>
+
+<!-- Main Star -->
+
+<path
+d="
+M256 174
+L272 226
+L324 244
+L272 262
+L256 314
+L240 262
+L188 244
+L240 226
+Z"
+fill="url(#orivGradient)"
+/>
+
+<!-- Small Star -->
+
+<path
+d="
+M338 156
+L344 172
+L360 178
+L344 184
+L338 200
+L332 184
+L316 178
+L332 172
+Z"
+fill="url(#orivGradient)"
+/>
+
+</svg>
