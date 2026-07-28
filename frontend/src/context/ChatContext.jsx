@@ -64,8 +64,8 @@ export const ChatProvider = ({ children }) => {
         const data = await getChats();
 
         setChats(data.chats);
-
-        // Agar chats hain to pehli chat active kar do
+        
+        // if chats exists then active fist chat
         if (data.chats.length > 0) {
           setActiveChat(data.chats[0]);
         }
