@@ -36,10 +36,12 @@ async function createChat(req, res) {
     return res.status(201).json({
       message: "Chat created successfully",
       chat: {
-        id: chat._id,
+        _id: chat._id,
         title: chat.title,
         user: chat.user,
         lastActivity: chat.lastActivity,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
       },
     });
   } catch (error) {
@@ -67,7 +69,6 @@ async function getUserChats(req, res) {
 }
 async function getChatMessages(req, res) {
   try {
-
     const { chatId } = req.params;
 
     const messages = await messageModel
@@ -77,15 +78,12 @@ async function getChatMessages(req, res) {
     return res.status(200).json({
       messages,
     });
-
   } catch (error) {
-
     console.error(error);
 
     return res.status(500).json({
       message: "Failed to fetch messages",
     });
-
   }
 }
 module.exports = { createChat, getUserChats, getChatMessages };

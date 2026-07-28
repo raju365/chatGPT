@@ -1,14 +1,16 @@
+import { useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import { useChat } from "../../context/ChatContext";
 
 const ChatMessages = () => {
   const { messages } = useChat();
-  console.log(messages);
 
-  messages.forEach((msg, index) => {
-    console.log(index, msg);
-  });
-
+  const bottomRef = useRef(null);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
   return (
     <div className="flex-1 overflow-y-auto px-6 py-6">
       {messages.length === 0 ? (
@@ -16,12 +18,16 @@ const ChatMessages = () => {
           Start a conversation 👋
         </div>
       ) : (
-        messages.map((message) => (
-          <MessageBubble
-            key={message._id || `${message.role}-${message.content}`}
-            message={message}
-          />
-        ))
+        <div className="space-y-6">
+          {messages.map((message) => (
+            <MessageBubble
+              key={message._id || `${message.role}-${message.content}`}
+              message={message}
+            />
+          ))}
+
+          <div ref={bottomRef} />
+        </div>
       )}
     </div>
   );

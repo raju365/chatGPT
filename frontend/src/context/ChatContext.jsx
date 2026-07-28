@@ -35,6 +35,15 @@ export const ChatProvider = ({ children }) => {
         },
       ]);
     });
+    socket.on("chat-title-updated", ({ chatId, title }) => {
+      setChats((prev) =>
+        prev.map((chat) => (chat._id === chatId ? { ...chat, title } : chat)),
+      );
+
+      setActiveChat((prev) =>
+        prev && prev._id === chatId ? { ...prev, title } : prev,
+      );
+    });
 
     socket.on("ai-error", (err) => {
       setTyping(false);
@@ -45,6 +54,7 @@ export const ChatProvider = ({ children }) => {
       socket.off("connect");
       socket.off("ai-response");
       socket.off("ai-error");
+      socket.off("chat-title-updated");
       socket.disconnect();
     };
   }, []);
@@ -68,32 +78,22 @@ export const ChatProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-
     if (!activeChat) return;
 
     async function loadMessages() {
+      try {
+        const data = await getMessages(activeChat._id);
 
-        try {
-
-            const data = await getMessages(activeChat._id);
-
-            setMessages(data.messages);
-
-        } catch (error) {
-
-            console.error(error);
-
-        }
-
+        setMessages(data.messages);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     loadMessages();
-
-}, [activeChat]);
-
-  useEffect(() => {
-    console.log("Active chat changed:", activeChat);
   }, [activeChat]);
+
+  
 
   const handleCreateChat = async () => {
     try {
@@ -101,6 +101,7 @@ export const ChatProvider = ({ children }) => {
 
       const data = await createChat("New Chat");
       console.log("Created Chat:", data.chat);
+      console.log("Chat _id:", data.chat._id);
       setChats((prev) => [...prev, data.chat]);
       setActiveChat(data.chat);
     } catch (error) {
@@ -110,9 +111,7 @@ export const ChatProvider = ({ children }) => {
     }
   };
   const sendMessage = (content) => {
-    console.log("sendMessage called");
-    console.log(content);
-    console.log("Active Chat:", activeChat);
+    
     if (!activeChat) {
       console.warn("No active chat selected");
       return;

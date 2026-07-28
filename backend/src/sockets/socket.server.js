@@ -17,7 +17,7 @@ const messageModel = require("../models/message.model");
 
 const aiService = require("../service/ai.service");
 const { createMemory, queryMemory } = require("../service/vector.service");
-
+const chatModel = require("../models/chat.model");
 /*
  * Initialize Socket.IO server.
  * @param {import("http").Server} httpServer
@@ -177,6 +177,23 @@ ${(memory || [])
             text: response,
           },
         });
+        // Update chat title if it's still "New Chat"
+        const chat = await chatModel.findById(messagePayload.chat);
+
+        if (chat && chat.title === "New Chat") {
+          const newTitle =
+            messagePayload.content.length > 40
+              ? messagePayload.content.slice(0, 40) + "..."
+              : messagePayload.content;
+
+          chat.title = newTitle;
+          await chat.save();
+
+          socket.emit("chat-title-updated", {
+            chatId: chat._id,
+            title: chat.title,
+          });
+        }
       } catch (error) {
         console.error("AI Error:", error.message);
 

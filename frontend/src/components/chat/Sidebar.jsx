@@ -57,11 +57,11 @@ const Sidebar = () => {
         ) : (
           chats.map((chat) => (
             <motion.button
-              key={chat.id || chat._id}
+              key={ chat._id}
               onClick={() => setActiveChat(chat)}
               whileHover={{ x: 5 }}
               className={`mb-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 transition ${
-                activeChat?.id === chat.id
+                activeChat?._id === chat._id
                   ? "bg-violet-600"
                   : "hover:bg-zinc-800"
               }`}
