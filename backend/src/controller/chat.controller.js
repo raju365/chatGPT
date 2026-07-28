@@ -7,6 +7,7 @@
  * -------------------------------------------------------
  */
 const chatModel = require("../models/chat.model");
+const messageModel = require("../models/message.model");
 /*
  * Create a new chat for the authenticated user
  */
@@ -64,4 +65,27 @@ async function getUserChats(req, res) {
     });
   }
 }
-module.exports = { createChat, getUserChats };
+async function getChatMessages(req, res) {
+  try {
+
+    const { chatId } = req.params;
+
+    const messages = await messageModel
+      .find({ chat: chatId })
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({
+      messages,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to fetch messages",
+    });
+
+  }
+}
+module.exports = { createChat, getUserChats, getChatMessages };

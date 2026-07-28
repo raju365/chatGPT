@@ -24,4 +24,9 @@ const router = express.Router();
  */
 router.post("/", authMiddleware.authUser, chatController.createChat);
 router.get("/", authMiddleware.authUser, chatController.getUserChats);
+router.get(
+  "/:chatId/messages",
+  authMiddleware.authUser,
+  chatController.getChatMessages,
+);
 module.exports = router;
