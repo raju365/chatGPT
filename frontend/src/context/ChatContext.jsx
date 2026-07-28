@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import socket from "../lib/socket";
-import { createChat, getChats } from "../services/chat.service";
+import { createChat, getChats, getMessages } from "../services/chat.service";
 
 import { useEffect } from "react";
 
@@ -66,7 +66,31 @@ export const ChatProvider = ({ children }) => {
 
     fetchChats();
   }, []);
-  
+
+  useEffect(() => {
+
+    if (!activeChat) return;
+
+    async function loadMessages() {
+
+        try {
+
+            const data = await getMessages(activeChat._id);
+
+            setMessages(data.messages);
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+    loadMessages();
+
+}, [activeChat]);
+
   useEffect(() => {
     console.log("Active chat changed:", activeChat);
   }, [activeChat]);
@@ -106,7 +130,7 @@ export const ChatProvider = ({ children }) => {
     setTyping(true);
 
     socket.emit("ai-message", {
-      chat: activeChat.id,
+      chat: activeChat._id,
       content,
     });
   };

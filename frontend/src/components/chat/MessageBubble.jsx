@@ -6,6 +6,9 @@ import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
 const MessageBubble = ({ message }) => {
+  console.log("MessageBubble:", message);
+  if (!message) return null;
+
   const [copied, setCopied] = useState(false);
 
   const isUser = message.role === "user";
@@ -32,7 +35,6 @@ const MessageBubble = ({ message }) => {
               if (!inline && match) {
                 return (
                   <div className="relative mt-4">
-
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(String(children));
@@ -44,11 +46,7 @@ const MessageBubble = ({ message }) => {
                       }}
                       className="absolute right-3 top-3 rounded-lg bg-zinc-800 p-2 hover:bg-zinc-700"
                     >
-                      {copied ? (
-                        <Check size={16} />
-                      ) : (
-                        <Copy size={16} />
-                      )}
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
                     </button>
 
                     <SyntaxHighlighter
@@ -63,10 +61,7 @@ const MessageBubble = ({ message }) => {
               }
 
               return (
-                <code
-                  className="rounded bg-zinc-800 px-1 py-0.5"
-                  {...props}
-                >
+                <code className="rounded bg-zinc-800 px-1 py-0.5" {...props}>
                   {children}
                 </code>
               );
