@@ -70,7 +70,19 @@ async function getUserChats(req, res) {
 async function getChatMessages(req, res) {
   try {
     const { chatId } = req.params;
+    const chat = await chatModel.findById(chatId);
 
+    if (!chat) {
+      return res.status(404).json({
+        message: "Chat not found",
+      });
+    }
+
+    if (chat.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
     const messages = await messageModel
       .find({ chat: chatId })
       .sort({ createdAt: 1 });

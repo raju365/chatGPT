@@ -81,6 +81,19 @@ function initSocketServer(httpServer) {
       try {
         console.log("Received ai-message:", messagePayload);
 
+        // ✅ Ownership check FIRST
+        const chat = await chatModel.findById(messagePayload.chat);
+        if (!chat) {
+          return socket.emit("ai-error", {
+            message: "Chat not found",
+          });
+        }
+
+        if (chat.user.toString() !== socket.user._id.toString()) {
+          return socket.emit("ai-error", {
+            message: "Unauthorized access",
+          });
+        }
         // Save message and generate embedding
         const [message, vectors] = await Promise.all([
           messageModel.create({
@@ -177,8 +190,11 @@ ${(memory || [])
             text: response,
           },
         });
+
+        // Update last activity
+        chat.lastActivity = new Date();
+        await chat.save();
         // Update chat title if it's still "New Chat"
-        const chat = await chatModel.findById(messagePayload.chat);
 
         if (chat && chat.title === "New Chat") {
           const newTitle =

@@ -456,8 +456,7 @@ const Home = () => {
         </div>
 
         <div className="border-t border-zinc-800 py-6 text-center text-sm text-zinc-500">
-          © 2026 Oriv AI. Built with ❤️ using React, Node.js, MongoDB &
-          Socket.IO.
+          © 2026 Oriv AI. Built with ❤️ by Raju barman.
         </div>
       </motion.footer>
     </main>
