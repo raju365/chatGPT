@@ -21,7 +21,7 @@ export const ChatProvider = ({ children }) => {
     socket.connect();
 
     socket.on("connect", () => {
-      console.log("✅ Socket Connected:", socket.id);
+      console.log("✅ Socket Connected:");
     });
 
     socket.on("ai-response", (data) => {
@@ -64,7 +64,7 @@ export const ChatProvider = ({ children }) => {
         const data = await getChats();
 
         setChats(data.chats);
-        
+
         // if chats exists then active fist chat
         if (data.chats.length > 0) {
           setActiveChat(data.chats[0]);
@@ -93,15 +93,12 @@ export const ChatProvider = ({ children }) => {
     loadMessages();
   }, [activeChat]);
 
-  
-
   const handleCreateChat = async () => {
     try {
       setLoading(true);
 
       const data = await createChat("New Chat");
-      console.log("Created Chat:", data.chat);
-      console.log("Chat _id:", data.chat._id);
+    
       setChats((prev) => [...prev, data.chat]);
       setActiveChat(data.chat);
     } catch (error) {
@@ -111,7 +108,6 @@ export const ChatProvider = ({ children }) => {
     }
   };
   const sendMessage = (content) => {
-    
     if (!activeChat) {
       console.warn("No active chat selected");
       return;
@@ -160,4 +156,13 @@ export const ChatProvider = ({ children }) => {
   );
 };
 
-export const useChat = () => useContext(ChatContext);
+export const useChat = () => {
+  const context = useContext(ChatContext);
+
+
+  if (!context) {
+    throw new Error("useChat must be used within ChatProvider");
+  }
+
+  return context;
+};

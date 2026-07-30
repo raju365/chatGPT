@@ -21,10 +21,8 @@ const Login = () => {
         password,
       });
 
-      console.log(data);
-      
-
       navigate("/chat");
+
     } catch (err) {
       console.error(err);
 

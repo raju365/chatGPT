@@ -2,11 +2,28 @@ import { Plus, MessageSquare, Settings, LogOut, Search } from "lucide-react";
 import { motion } from "motion/react";
 import OrivIcon from "../../assets/oriv-icon.svg";
 import { useChat } from "../../context/ChatContext";
+import { logout } from "../../services/auth.service";
+import socket from "../../lib/socket";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Sidebar = () => {
   const { chats, activeChat, setActiveChat, handleCreateChat, loading } =
     useChat();
+  const navigate = useNavigate();
 
+  const handleLogout = async () => {
+    try {
+      const data = await logout();
+
+      socket.disconnect();
+      toast.success(data.message);
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Logout failed");
+    }
+  };
   return (
     <aside className="hidden w-80 flex-col border-r border-zinc-800 bg-zinc-900/60 backdrop-blur-xl lg:flex">
       {/* Logo */}
@@ -57,7 +74,7 @@ const Sidebar = () => {
         ) : (
           chats.map((chat) => (
             <motion.button
-              key={ chat._id}
+              key={chat._id}
               onClick={() => setActiveChat(chat)}
               whileHover={{ x: 5 }}
               className={`mb-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 transition ${
@@ -81,7 +98,10 @@ const Sidebar = () => {
           Settings
         </button>
 
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-400 transition hover:bg-red-500/10">
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-400 transition hover:bg-red-500/10"
+        >
           <LogOut size={18} />
           Logout
         </button>

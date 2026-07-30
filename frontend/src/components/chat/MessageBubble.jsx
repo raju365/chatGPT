@@ -6,7 +6,7 @@ import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
 const MessageBubble = ({ message }) => {
-  console.log("MessageBubble:", message);
+  
   if (!message) return null;
 
   const [copied, setCopied] = useState(false);
