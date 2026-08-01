@@ -34,4 +34,9 @@ router.patch(
   authMiddleware.authUser,
   chatController.renameChat,
 );
+router.delete(
+  "/:chatId",
+  authMiddleware.authUser,
+  chatController.deleteChat,
+);
 module.exports = router;

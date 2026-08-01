@@ -143,4 +143,44 @@ async function renameChat(req, res) {
     });
   }
 }
-module.exports = { createChat, getUserChats, getChatMessages, renameChat };
+async function deleteChat(req, res) {
+  try {
+    const { chatId } = req.params;
+
+    const chat = await chatModel.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({
+        message: "Chat not found",
+      });
+    }
+
+    if (chat.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    // delete messages
+
+    await messageModel.deleteMany({
+      chat: chatId,
+    });
+
+    // delete chat
+
+    await chat.deleteOne();
+
+    return res.status(200).json({
+      message: "Chat deleted successfully",
+      chatId,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to delete chat",
+    });
+  }
+}
+module.exports = { createChat, getUserChats, getChatMessages, renameChat, deleteChat };
