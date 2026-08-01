@@ -1,8 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import socket from "../lib/socket";
-import { createChat, getChats, getMessages } from "../services/chat.service";
+import { createChat, getChats, getMessages,renameChat } from "../services/chat.service";
 
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 const ChatContext = createContext();
 
@@ -129,6 +130,29 @@ export const ChatProvider = ({ children }) => {
       content,
     });
   };
+  const handleRenameChat = async (chatId, title) => {
+  try {
+    const data = await renameChat(chatId, title);
+
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat._id === chatId ? data.chat : chat
+      )
+    );
+
+    if (activeChat?._id === chatId) {
+      setActiveChat(data.chat);
+    }
+
+    toast.success("Chat renamed");
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message || "Failed to rename chat"
+    );
+  }
+};
   return (
     <ChatContext.Provider
       value={{
@@ -149,6 +173,7 @@ export const ChatProvider = ({ children }) => {
 
         handleCreateChat,
         sendMessage,
+        handleRenameChat,
       }}
     >
       {children}

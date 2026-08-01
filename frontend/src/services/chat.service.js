@@ -16,3 +16,9 @@ export const getMessages = async (chatId) => {
 
   return data;
 };
+export async function renameChat(chatId, title) {
+  const { data } = await api.patch(`/chat/${chatId}`, {
+    title,
+  });
+  return data;
+}
