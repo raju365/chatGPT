@@ -29,4 +29,9 @@ router.get(
   authMiddleware.authUser,
   chatController.getChatMessages,
 );
+router.patch(
+  "/:chatId",
+  authMiddleware.authUser,
+  chatController.renameChat,
+);
 module.exports = router;

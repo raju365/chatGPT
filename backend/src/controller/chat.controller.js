@@ -98,4 +98,49 @@ async function getChatMessages(req, res) {
     });
   }
 }
-module.exports = { createChat, getUserChats, getChatMessages };
+async function renameChat(req, res) {
+  try {
+    const { chatId } = req.params;
+    const { title } = req.body;
+
+    // Validate title
+    if (!title || !title.trim()) {
+      return res.status(400).json({
+        message: "Title is required",
+      });
+    }
+
+    // Check if chat exists
+    const chat = await chatModel.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({
+        message: "Chat not found",
+      });
+    }
+
+    // Check ownership
+    if (chat.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Access denied",
+      });
+    }
+
+    // Update title
+    chat.title = title.trim();
+
+    await chat.save();
+
+    return res.status(200).json({
+      message: "Chat renamed successfully",
+      chat,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to rename chat",
+    });
+  }
+}
+module.exports = { createChat, getUserChats, getChatMessages, renameChat };
