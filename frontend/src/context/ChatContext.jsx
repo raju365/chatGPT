@@ -1,6 +1,12 @@
 import { createContext, useContext, useState } from "react";
 import socket from "../lib/socket";
-import { createChat, getChats, getMessages,renameChat } from "../services/chat.service";
+import {
+  createChat,
+  getChats,
+  getMessages,
+  renameChat,
+  deleteChat,
+} from "../services/chat.service";
 
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -99,7 +105,7 @@ export const ChatProvider = ({ children }) => {
       setLoading(true);
 
       const data = await createChat("New Chat");
-    
+
       setChats((prev) => [...prev, data.chat]);
       setActiveChat(data.chat);
     } catch (error) {
@@ -131,28 +137,48 @@ export const ChatProvider = ({ children }) => {
     });
   };
   const handleRenameChat = async (chatId, title) => {
-  try {
-    const data = await renameChat(chatId, title);
+    try {
+      const data = await renameChat(chatId, title);
 
-    setChats((prev) =>
-      prev.map((chat) =>
-        chat._id === chatId ? data.chat : chat
-      )
-    );
+      setChats((prev) =>
+        prev.map((chat) => (chat._id === chatId ? data.chat : chat)),
+      );
 
-    if (activeChat?._id === chatId) {
-      setActiveChat(data.chat);
+      if (activeChat?._id === chatId) {
+        setActiveChat(data.chat);
+      }
+
+      toast.success("Chat renamed");
+    } catch (error) {
+      console.error(error);
+
+      toast.error(error.response?.data?.message || "Failed to rename chat");
     }
+  };
+  const handleDeleteChat = async (chatId) => {
+    try {
+      await deleteChat(chatId);
 
-    toast.success("Chat renamed");
-  } catch (error) {
-    console.error(error);
+      const updatedChats = chats.filter((chat) => chat._id !== chatId);
 
-    toast.error(
-      error.response?.data?.message || "Failed to rename chat"
-    );
-  }
-};
+      setChats(updatedChats);
+
+      if (activeChat?._id === chatId) {
+        if (updatedChats.length > 0) {
+          setActiveChat(updatedChats[0]);
+        } else {
+          setActiveChat(null);
+          setMessages([]);
+        }
+      }
+
+      toast.success("Chat deleted");
+    } catch (error) {
+      console.error(error);
+
+      toast.error(error.response?.data?.message || "Failed to delete chat");
+    }
+  };
   return (
     <ChatContext.Provider
       value={{
@@ -174,6 +200,7 @@ export const ChatProvider = ({ children }) => {
         handleCreateChat,
         sendMessage,
         handleRenameChat,
+        handleDeleteChat
       }}
     >
       {children}
@@ -183,7 +210,6 @@ export const ChatProvider = ({ children }) => {
 
 export const useChat = () => {
   const context = useContext(ChatContext);
-
 
   if (!context) {
     throw new Error("useChat must be used within ChatProvider");

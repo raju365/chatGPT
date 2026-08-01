@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import {
-  MessageSquare,
-  MoreHorizontal,
-  Pencil,
-} from "lucide-react";
+import { MessageSquare, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -15,12 +11,8 @@ import {
 
 import { useChat } from "../../context/ChatContext";
 
-const ChatHistoryItem = ({
-  chat,
-  activeChat,
-  setActiveChat,
-}) => {
-  const { handleRenameChat } = useChat();
+const ChatHistoryItem = ({ chat, activeChat, setActiveChat }) => {
+  const { handleRenameChat, handleDeleteChat } = useChat();
 
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(chat.title);
@@ -41,9 +33,7 @@ const ChatHistoryItem = ({
     <motion.div
       whileHover={{ x: 5 }}
       className={`group mb-2 flex items-center rounded-xl transition ${
-        activeChat?._id === chat._id
-          ? "bg-violet-600"
-          : "hover:bg-zinc-800"
+        activeChat?._id === chat._id ? "bg-violet-600" : "hover:bg-zinc-800"
       }`}
     >
       <button
@@ -64,9 +54,7 @@ const ChatHistoryItem = ({
             className="w-full bg-transparent outline-none"
           />
         ) : (
-          <span className="truncate">
-            {chat.title}
-          </span>
+          <span className="truncate">{chat.title}</span>
         )}
       </button>
 
@@ -92,6 +80,13 @@ const ChatHistoryItem = ({
           >
             <Pencil size={16} />
             Rename
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => handleDeleteChat(chat._id)}
+            className="cursor-pointer text-red-500"
+          >
+            <Trash2 size={16} />
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

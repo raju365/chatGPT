@@ -22,3 +22,7 @@ export async function renameChat(chatId, title) {
   });
   return data;
 }
+export const deleteChat = async (chatId) => {
+  const { data } = await api.delete(`/chat/${chatId}`);
+  return data;
+};
