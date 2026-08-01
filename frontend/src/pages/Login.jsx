@@ -2,12 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "./ui/Button";
 import Input from "./ui/Input";
 import OrivIcon from "../assets/oriv-icon.svg";
-import socket from "../lib/socket";
 import api from "../lib/axios";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,9 +22,14 @@ const Login = () => {
         email,
         password,
       });
+      const { id, ...rest } = data.user;
 
-      navigate("/chat");
-
+      setUser({
+        ...rest,
+        _id: id,
+      });
+      toast.success("Login successful");
+      navigate("/chat", { replace: true });
     } catch (err) {
       console.error(err);
 

@@ -8,8 +8,15 @@ import {
 } from "lucide-react";
 import CountUpModule from "react-countup";
 import { motion } from "motion/react";
+import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
+  const { user } = useAuth();
+
+  const isLoggedIn = !!user;
+
+  const ctaLink = isLoggedIn ? "/chat" : "/register";
+  const ctaText = isLoggedIn ? "Continue Chat →" : "Start Chatting →";
   const CountUp = CountUpModule.default;
   const fadeUp = {
     hidden: {
@@ -64,6 +71,17 @@ const Home = () => {
               Chat smarter, generate ideas, write code, summarize documents and
               boost productivity with one modern AI platform.
             </p>
+            {isLoggedIn && (
+              <div className="mt-8 max-w-md rounded-2xl border border-violet-500/20 bg-violet-500/10 p-5 backdrop-blur">
+                <p className="text-sm text-zinc-400">Logged in as</p>
+
+                <h3 className="mt-1 text-2xl font-bold">
+                  👋 Welcome back, {user.fullName.firstName}
+                </h3>
+
+                <p className="mt-2 text-zinc-300">{user.email}</p>
+              </div>
+            )}
 
             <div className="mt-10 flex flex-wrap gap-4">
               <motion.div
@@ -72,10 +90,10 @@ const Home = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
                 <Link
-                  to="/register"
+                  to={ctaLink}
                   className="rounded-2xl bg-violet-600 px-8 py-4 font-semibold transition hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-700/30"
                 >
-                  Start Chatting →
+                  {ctaText}
                 </Link>
               </motion.div>
 
@@ -85,7 +103,7 @@ const Home = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
               >
                 <a
-                  href="https://github.com/"
+                  href="https://github.com/raju365/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-2xl border border-zinc-800 px-8 py-4 transition hover:border-violet-500 hover:bg-zinc-900 hover:text-white"
@@ -401,19 +419,30 @@ const Home = () => {
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-5">
-              <Link
-                to="/register"
-                className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105"
-              >
-                Get Started Free
-              </Link>
+              {isLoggedIn ? (
+                <Link
+                  to="/chat"
+                  className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105"
+                >
+                  Continue Chat →
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/register"
+                    className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105"
+                  >
+                    Get Started Free
+                  </Link>
 
-              <Link
-                to="/login"
-                className="rounded-2xl border border-white/30 px-8 py-4 transition hover:bg-white/10"
-              >
-                Login
-              </Link>
+                  <Link
+                    to="/login"
+                    className="rounded-2xl border border-white/30 px-8 py-4 transition hover:bg-white/10"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

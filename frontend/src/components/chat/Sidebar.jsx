@@ -1,29 +1,13 @@
-import { Plus, MessageSquare, Settings, LogOut, Search } from "lucide-react";
+import { Plus, MessageSquare, Search } from "lucide-react";
 import { motion } from "motion/react";
 import OrivIcon from "../../assets/oriv-icon.svg";
 import { useChat } from "../../context/ChatContext";
-import { logout } from "../../services/auth.service";
-import socket from "../../lib/socket";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-
+import UserMenu from "./UserMenu";
+import ChatHistoryItem from "./ChatHistoryItem";
 const Sidebar = () => {
   const { chats, activeChat, setActiveChat, handleCreateChat, loading } =
     useChat();
-  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      const data = await logout();
-
-      socket.disconnect();
-      toast.success(data.message);
-      navigate("/login", { replace: true });
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Logout failed");
-    }
-  };
   return (
     <aside className="hidden w-80 flex-col border-r border-zinc-800 bg-zinc-900/60 backdrop-blur-xl lg:flex">
       {/* Logo */}
@@ -73,38 +57,19 @@ const Sidebar = () => {
           <p className="px-4 py-2 text-sm text-zinc-500">No chats yet</p>
         ) : (
           chats.map((chat) => (
-            <motion.button
+            <ChatHistoryItem
               key={chat._id}
-              onClick={() => setActiveChat(chat)}
-              whileHover={{ x: 5 }}
-              className={`mb-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 transition ${
-                activeChat?._id === chat._id
-                  ? "bg-violet-600"
-                  : "hover:bg-zinc-800"
-              }`}
-            >
-              <MessageSquare size={18} />
-
-              <span className="truncate">{chat.title}</span>
-            </motion.button>
+              chat={chat}
+              activeChat={activeChat}
+              setActiveChat={setActiveChat}
+            />
           ))
         )}
       </div>
 
       {/* Footer */}
       <div className="border-t border-zinc-800 p-4">
-        <button className="mb-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 transition hover:bg-zinc-800">
-          <Settings size={18} />
-          Settings
-        </button>
-
-        <button
-          onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-400 transition hover:bg-red-500/10"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
+        <UserMenu showChat={false} />
       </div>
     </aside>
   );

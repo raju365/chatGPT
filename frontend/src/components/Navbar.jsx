@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import OrivIcon from "../assets/oriv-icon.svg";
+import { useAuth } from "../context/AuthContext";
+import UserMenu from "./chat/UserMenu";
+
 const Navbar = () => {
+  const { user } = useAuth();
   return (
     <nav className="sticky top-0 z-50 border-b border-zinc-800/60 bg-zinc-950/70 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
@@ -25,19 +29,15 @@ const Navbar = () => {
         {/* Right */}
 
         <div className="flex items-center gap-4">
-          <Link
-            to="/login"
-            className="rounded-xl border border-zinc-700 px-5 py-2 transition hover:border-violet-500 hover:bg-zinc-900"
-          >
-            Login
-          </Link>
+          {user ? (
+            <UserMenu />
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
 
-          <Link
-            to="/register"
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2 font-medium shadow-lg shadow-violet-600/30 transition hover:scale-105"
-          >
-            Get Started
-          </Link>
+              <Link to="/register">Get Started</Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
