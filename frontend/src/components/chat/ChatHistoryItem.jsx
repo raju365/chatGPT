@@ -61,13 +61,13 @@ const ChatHistoryItem = ({ chat, activeChat, setActiveChat }) => {
       {/* Menu */}
 
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
+        <DropdownMenuTrigger>
+          <div
             className="mr-2 rounded-md p-1 opacity-0 transition group-hover:opacity-100 hover:bg-zinc-700"
-            onClick={(e) => e.stopPropagation()}
+            
           >
             <MoreHorizontal size={18} />
-          </button>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent

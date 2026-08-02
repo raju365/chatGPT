@@ -45,8 +45,8 @@ const UserMenu = ({ showChat = true }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="flex w-full items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-2 transition hover:border-violet-500 outline-none">
+      <DropdownMenuTrigger>
+        <div className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-2 transition hover:border-violet-500 outline-none">
           <Avatar size="default">
             <AvatarFallback>
               {user?.fullName?.firstName?.[0]}
@@ -59,13 +59,11 @@ const UserMenu = ({ showChat = true }) => {
               {user?.fullName?.firstName} {user?.fullName?.lastName}
             </p>
 
-            <p className="truncate text-xs text-zinc-400">
-              {user?.email}
-            </p>
+            <p className="truncate text-xs text-zinc-400">{user?.email}</p>
           </div>
 
           <ChevronDown size={16} className="text-zinc-400" />
-        </button>
+        </div>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -86,9 +84,7 @@ const UserMenu = ({ showChat = true }) => {
                 {user?.fullName?.firstName} {user?.fullName?.lastName}
               </h3>
 
-              <p className="text-xs text-zinc-400">
-                {user?.email}
-              </p>
+              <p className="text-xs text-zinc-400">{user?.email}</p>
             </div>
           </div>
         </DropdownMenuGroup>
@@ -97,11 +93,12 @@ const UserMenu = ({ showChat = true }) => {
 
         <DropdownMenuGroup>
           {showChat && (
-            <DropdownMenuItem asChild>
-              <Link to="/chat" className="flex items-center gap-3">
-                <MessageCircle size={18} />
-                Continue Chat
-              </Link>
+            <DropdownMenuItem
+              onClick={() => navigate("/chat")}
+              className="cursor-pointer"
+            >
+              <MessageCircle size={18} />
+              Continue Chat
             </DropdownMenuItem>
           )}
 
