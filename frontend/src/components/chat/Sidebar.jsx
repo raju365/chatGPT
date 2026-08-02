@@ -4,7 +4,7 @@ import OrivIcon from "../../assets/oriv-icon.svg";
 import { useChat } from "../../context/ChatContext";
 import UserMenu from "./UserMenu";
 import ChatHistoryItem from "./ChatHistoryItem";
-const Sidebar = () => {
+const Sidebar = ({ mobile = false }) => {
   const {
     chats,
     activeChat,
@@ -18,7 +18,11 @@ const Sidebar = () => {
     chat.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   return (
-    <aside className="hidden w-80 flex-col border-r border-zinc-800 bg-zinc-900/60 backdrop-blur-xl lg:flex">
+    <aside
+      className={`w-80 flex-col border-r border-zinc-800 bg-zinc-900/60 backdrop-blur-xl ${
+        mobile ? "flex" : "hidden lg:flex"
+      }`}
+    >
       {/* Logo */}
       <div className="flex items-center gap-3 border-b border-zinc-800 p-6">
         <img

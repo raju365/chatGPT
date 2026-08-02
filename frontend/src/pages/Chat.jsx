@@ -8,7 +8,7 @@ import MobileSidebar from "../components/chat/MobileSidebar";
 const Chat = () => {
   return (
     <ChatProvider>
-      <main className="flex h-screen bg-zinc-950 text-white">
+      <main className="flex h-screen flex-col bg-zinc-950 text-white lg:flex-row">
         <Sidebar />
         <MobileSidebar />
         <section className="flex flex-1 flex-col">
