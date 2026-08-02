@@ -14,6 +14,7 @@ import { toast } from "sonner";
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [messages, setMessages] = useState([]);
 
   const [activeChat, setActiveChat] = useState(null);
@@ -200,7 +201,9 @@ export const ChatProvider = ({ children }) => {
         handleCreateChat,
         sendMessage,
         handleRenameChat,
-        handleDeleteChat
+        handleDeleteChat,
+        searchQuery,
+        setSearchQuery,
       }}
     >
       {children}

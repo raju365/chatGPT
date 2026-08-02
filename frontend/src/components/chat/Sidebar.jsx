@@ -5,9 +5,18 @@ import { useChat } from "../../context/ChatContext";
 import UserMenu from "./UserMenu";
 import ChatHistoryItem from "./ChatHistoryItem";
 const Sidebar = () => {
-  const { chats, activeChat, setActiveChat, handleCreateChat, loading } =
-    useChat();
-
+  const {
+    chats,
+    activeChat,
+    setActiveChat,
+    handleCreateChat,
+    loading,
+    searchQuery,
+    setSearchQuery,
+  } = useChat();
+  const filteredChats = chats.filter((chat) =>
+    chat.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
   return (
     <aside className="hidden w-80 flex-col border-r border-zinc-800 bg-zinc-900/60 backdrop-blur-xl lg:flex">
       {/* Logo */}
@@ -47,16 +56,18 @@ const Sidebar = () => {
             type="text"
             placeholder="Search chats..."
             className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
       {/* Chat List */}
       <div className="mt-5 flex-1 overflow-y-auto px-4">
-        {chats.length === 0 ? (
-          <p className="px-4 py-2 text-sm text-zinc-500">No chats yet</p>
+        {filteredChats.length === 0 ? (
+          <p className="px-4 py-2 text-sm text-zinc-500">No chats found</p>
         ) : (
-          chats.map((chat) => (
+          filteredChats.map((chat) => (
             <ChatHistoryItem
               key={chat._id}
               chat={chat}
