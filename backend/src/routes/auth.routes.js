@@ -44,4 +44,9 @@ router.patch("/profile", authUser, authControllers.updateProfile);
  */
 router.patch("/change-password", authUser, authControllers.changePassword);
 
+router.delete(
+  "/delete-account",
+  authUser,
+  authControllers.deleteAccount,
+);
 module.exports = router;

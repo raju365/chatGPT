@@ -12,6 +12,8 @@ const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { sendResetPasswordEmail } = require("../service/mail.service");
+const chatModel = require("../models/chat.model");
+const messageModel = require("../models/message.model");
 /*
  * Register a new user
  */
@@ -332,6 +334,44 @@ async function changePassword(req, res) {
     });
   }
 }
+async function deleteAccount(req, res) {
+  try {
+    const userId = req.user._id;
+
+    // Delete all messages
+    await messageModel.deleteMany({
+      user: userId,
+    });
+
+    // Delete all chats
+    await chatModel.deleteMany({
+      user: userId,
+    });
+
+    // Delete user
+    await userModel.findByIdAndDelete(userId);
+
+    // Clear cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? "none"
+          : "lax",
+    });
+
+    return res.status(200).json({
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
 module.exports = {
   registerUser,
   loginUser,
@@ -341,4 +381,5 @@ module.exports = {
   resetPassword,
   updateProfile,
   changePassword,
+  deleteAccount,
 };
