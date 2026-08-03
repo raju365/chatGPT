@@ -12,7 +12,7 @@ const Chat = () => {
       <main className="flex h-screen flex-col overflow-hidden bg-zinc-950 text-white lg:flex-row">
         <NetworkStatus />
         <Sidebar />
-        <section className="flex flex-1 flex-col">
+        <section className="flex min-h-0  flex-1 flex-col">
           <ChatHeader />
           <ChatMessages />
           <ChatInput />
