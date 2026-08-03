@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { resetPassword } from "../services/auth.service";
@@ -20,8 +20,8 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      return toast.error("Password must be at least 6 characters");
+    if (password.length < 8) {
+      return toast.error("Password must be at least 8 characters");
     }
 
     if (password !== confirmPassword) {
@@ -35,13 +35,13 @@ const ResetPassword = () => {
 
       toast.success(data.message);
 
-      navigate("/login", {
-        replace: true,
-      });
+      setTimeout(() => {
+        navigate("/login", {
+          replace: true,
+        });
+      }, 1500);
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to reset password",
-      );
+      toast.error(error.response?.data?.message || "Failed to reset password");
     } finally {
       setLoading(false);
     }
@@ -53,20 +53,15 @@ const ResetPassword = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900 p-8"
       >
-        <h1 className="mb-2 text-3xl font-bold">
-          Reset Password
-        </h1>
+        <h1 className="mb-2 text-3xl font-bold">Reset Your Password</h1>
 
         <p className="mb-8 text-zinc-400">
-          Enter your new password.
+          Choose a strong password to secure your account.
         </p>
-
         {/* Password */}
 
         <div className="mb-5">
-          <label className="mb-2 block text-sm">
-            New Password
-          </label>
+          <label className="mb-2 block text-sm">New Password</label>
 
           <div className="flex items-center rounded-xl border border-zinc-700 px-4">
             <Lock size={18} />
@@ -90,9 +85,7 @@ const ResetPassword = () => {
         {/* Confirm */}
 
         <div className="mb-8">
-          <label className="mb-2 block text-sm">
-            Confirm Password
-          </label>
+          <label className="mb-2 block text-sm">Confirm Password</label>
 
           <div className="flex items-center rounded-xl border border-zinc-700 px-4">
             <Lock size={18} />
@@ -103,21 +96,31 @@ const ResetPassword = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
+            {confirmPassword && password !== confirmPassword && (
+              <p className="mt-2 text-sm text-red-500">
+                Passwords do not match
+              </p>
+            )}
 
-            <button
-              type="button"
-              onClick={() => setShowConfirm(!showConfirm)}
-            >
+            {confirmPassword && password === confirmPassword && (
+              <p className="mt-2 text-sm text-green-500">Passwords match</p>
+            )}
+
+            <button type="button" onClick={() => setShowConfirm(!showConfirm)}>
               {showConfirm ? <EyeOff /> : <Eye />}
             </button>
           </div>
         </div>
 
         <button
-          disabled={loading}
-          className="w-full rounded-xl bg-violet-600 py-3 font-semibold hover:bg-violet-500 disabled:opacity-60"
+          disabled={loading || !password || !confirmPassword}
+          className="w-full rounded-xl bg-violet-600 py-3 font-semibold hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Updating..." : "Reset Password"}
+          {loading ? (
+            <Loader2 className="mx-auto animate-spin" size={20} />
+          ) : (
+            "Reset Password"
+          )}
         </button>
 
         <Link
