@@ -29,7 +29,21 @@ export const ChatProvider = ({ children }) => {
     socket.connect();
 
     socket.on("connect", () => {
-      console.log("✅ Socket Connected:");
+      console.log("✅ Socket Connected");
+    });
+
+    // Internet/Socket disconnect
+    socket.on("disconnect", (reason) => {
+      console.log("❌ Socket Disconnected:", reason);
+
+      toast.error("Connection lost");
+    });
+
+    // Socket reconnect
+    socket.io.on("reconnect", (attempt) => {
+      console.log(`✅ Reconnected after ${attempt} attempts`);
+
+      toast.success("Reconnected");
     });
 
     socket.on("ai-response", (data) => {
@@ -43,6 +57,7 @@ export const ChatProvider = ({ children }) => {
         },
       ]);
     });
+
     socket.on("chat-title-updated", ({ chatId, title }) => {
       setChats((prev) =>
         prev.map((chat) => (chat._id === chatId ? { ...chat, title } : chat)),
@@ -60,9 +75,14 @@ export const ChatProvider = ({ children }) => {
 
     return () => {
       socket.off("connect");
+      socket.off("disconnect");
       socket.off("ai-response");
       socket.off("ai-error");
       socket.off("chat-title-updated");
+
+      // remove manager listener
+      socket.io.off("reconnect");
+
       socket.disconnect();
     };
   }, []);

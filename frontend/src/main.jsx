@@ -4,12 +4,15 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { StrictMode } from "react";
+import { NetworkProvider } from "./context/NetworkContext";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <NetworkProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </NetworkProvider>
     </BrowserRouter>
   </StrictMode>,
 );
