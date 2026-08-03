@@ -27,7 +27,7 @@ const ChatInput = () => {
   };
 
   return (
-    <div className="border-t border-zinc-800 bg-zinc-950 p-5">
+    <div className="sticky bottom-0 z-30 border-t border-zinc-800 bg-zinc-950/80 p-5 backdrop-blur-xl">
       <div className="mx-auto flex max-w-4xl items-end gap-3 rounded-3xl border border-zinc-800 bg-zinc-900 p-3">
         <button className="rounded-xl p-3 transition hover:bg-zinc-800">
           <Paperclip size={20} />
@@ -39,7 +39,9 @@ const ChatInput = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={
-            isOnline ? "Message Oriv AI..." : "You're offline. Check your internet..."
+            isOnline
+              ? "Message Oriv AI..."
+              : "You're offline. Check your internet..."
           }
           disabled={!isOnline}
           className="flex-1 resize-none bg-transparent outline-none disabled:cursor-not-allowed disabled:text-zinc-500"

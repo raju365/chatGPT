@@ -12,7 +12,7 @@ const ChatMessages = () => {
     });
   }, [messages]);
   return (
-    <div className="flex-1 overflow-y-auto bg-zinc-950">
+    <div className="flex-1 overflow-y-auto px-6 py-6 bg-zinc-950">
       <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col px-4 py-6 sm:px-6">
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center text-zinc-500">

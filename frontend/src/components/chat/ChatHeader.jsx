@@ -47,7 +47,7 @@ const ChatHeader = () => {
   };
 
   return (
-    <header className="flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-950/70 px-6 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-950/80 px-6 backdrop-blur-xl">
       {/* Left */}
       <div className="flex items-center gap-4">
         {/* Mobile Sidebar */}
@@ -63,7 +63,10 @@ const ChatHeader = () => {
             <Sidebar mobile />
           </SheetContent>
         </Sheet>
-        <Link to="/" className="group flex items-center gap-3 transition hover:opacity-80">
+        <Link
+          to="/"
+          className="hidden md:flex items-center gap-3 hover:opacity-80"
+        >
           <img
             src={OrivIcon}
             className="h-10 w-10 rounded-xl bg-violet-600 p-2 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110"
@@ -78,8 +81,8 @@ const ChatHeader = () => {
 
         <div className="hidden h-8 w-px bg-zinc-700 lg:block"></div>
 
-        <div>
-          <h2 className="max-w-55 truncate text-xl font-semibold sm:max-w-md">
+        <div className="flex-1  min-w-0">
+          <h2 className="truncate text-lg font-semibold sm:text-lg">
             {activeChat?.title || "New Conversation"}
           </h2>
 
@@ -91,7 +94,17 @@ const ChatHeader = () => {
             />
 
             <span className="text-sm text-zinc-400">
-              {typing ? "Oriv AI is typing..." : "Oriv AI is online"}
+              {typing ? (
+                <>
+                  <span className="hidden sm:inline">Oriv AI is typing...</span>
+                  <span className="sm:hidden">Typing...</span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">Oriv AI is online</span>
+                  <span className="sm:hidden">Online</span>
+                </>
+              )}
             </span>
           </div>
         </div>
@@ -100,12 +113,13 @@ const ChatHeader = () => {
       {/* Right */}
 
       {activeChat && (
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
+          {/* Desktop only */}
           <motion.button
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             onClick={renameChat}
-            className="rounded-xl p-3 transition hover:bg-zinc-800"
+            className="hidden rounded-xl p-3 transition hover:bg-zinc-800 md:flex"
           >
             <Pencil size={20} />
           </motion.button>
@@ -114,7 +128,7 @@ const ChatHeader = () => {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleDeleteChat(activeChat._id)}
-            className="rounded-xl p-3 transition hover:bg-red-500/10 hover:text-red-400"
+            className="hidden rounded-xl p-3 transition hover:bg-red-500/10 hover:text-red-400 md:flex"
           >
             <Trash2 size={20} />
           </motion.button>
