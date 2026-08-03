@@ -1,50 +1,50 @@
 import { useState } from "react";
 import { User, Mail, Save } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-
+import { updateProfile } from "../../services/auth.service";
+import { toast } from "sonner";
 const PersonalInfoCard = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
 
-  const [firstName, setFirstName] = useState(
-    user?.fullName?.firstName || "",
-  );
+  const [firstName, setFirstName] = useState(user?.fullName?.firstName || "");
 
-  const [lastName, setLastName] = useState(
-    user?.fullName?.lastName || "",
-  );
+  const [lastName, setLastName] = useState(user?.fullName?.lastName || "");
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Backend API next step
-    console.log({
-      firstName,
-      lastName,
-    });
+    try {
+      setLoading(true);
+
+      const data = await updateProfile(firstName, lastName);
+
+      setUser(data.user);
+
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section className="rounded-3xl border border-zinc-800 bg-zinc-900 p-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold">
-          Personal Information
-        </h2>
+        <h2 className="text-2xl font-bold">Personal Information</h2>
 
         <p className="mt-2 text-sm text-zinc-400">
           Update your personal details.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6"
-      >
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* First Name */}
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            First Name
-          </label>
+          <label className="mb-2 block text-sm font-medium">First Name</label>
 
           <div className="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950 px-4">
             <User size={18} className="text-zinc-500" />
@@ -52,9 +52,7 @@ const PersonalInfoCard = () => {
             <input
               type="text"
               value={firstName}
-              onChange={(e) =>
-                setFirstName(e.target.value)
-              }
+              onChange={(e) => setFirstName(e.target.value)}
               className="w-full bg-transparent py-3 outline-none"
             />
           </div>
@@ -63,9 +61,7 @@ const PersonalInfoCard = () => {
         {/* Last Name */}
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
-            Last Name
-          </label>
+          <label className="mb-2 block text-sm font-medium">Last Name</label>
 
           <div className="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950 px-4">
             <User size={18} className="text-zinc-500" />
@@ -73,9 +69,7 @@ const PersonalInfoCard = () => {
             <input
               type="text"
               value={lastName}
-              onChange={(e) =>
-                setLastName(e.target.value)
-              }
+              onChange={(e) => setLastName(e.target.value)}
               className="w-full bg-transparent py-3 outline-none"
             />
           </div>
@@ -107,11 +101,12 @@ const PersonalInfoCard = () => {
         {/* Save */}
 
         <button
+          disabled={loading}
           type="submit"
-          className="flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 font-medium transition hover:bg-violet-500"
+          className="flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 font-medium transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Save size={18} />
-          Save Changes
+          {loading ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </section>

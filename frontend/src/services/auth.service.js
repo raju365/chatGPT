@@ -15,3 +15,11 @@ export async function resetPassword(token, password) {
 
   return data;
 }
+export async function updateProfile(firstName, lastName) {
+  const { data } = await api.patch("/auth/profile", {
+    firstName,
+    lastName,
+  });
+
+  return data;
+}
