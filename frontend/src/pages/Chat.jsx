@@ -3,14 +3,13 @@ import ChatHeader from "../components/chat/ChatHeader";
 import ChatMessages from "../components/chat/ChatMessages";
 import ChatInput from "../components/chat/ChatInput";
 import { ChatProvider } from "../context/ChatContext";
-import MobileSidebar from "../components/chat/MobileSidebar";
+
 
 const Chat = () => {
   return (
     <ChatProvider>
       <main className="flex h-screen flex-col bg-zinc-950 text-white lg:flex-row">
         <Sidebar />
-        <MobileSidebar />
         <section className="flex flex-1 flex-col">
           <ChatHeader />
           <ChatMessages />

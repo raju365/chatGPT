@@ -19,8 +19,8 @@ const Sidebar = ({ mobile = false }) => {
   );
   return (
     <aside
-      className={`w-80 flex-col border-r border-zinc-800 bg-zinc-900/60 backdrop-blur-xl ${
-        mobile ? "flex" : "hidden lg:flex"
+      className={`flex flex-col border-r border-zinc-800 bg-zinc-900/95 backdrop-blur-xl ${
+        mobile ? "h-screen w-full" : "hidden h-screen w-80 lg:flex"
       }`}
     >
       {/* Logo */}

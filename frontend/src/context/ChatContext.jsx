@@ -109,19 +109,27 @@ export const ChatProvider = ({ children }) => {
 
       setChats((prev) => [...prev, data.chat]);
       setActiveChat(data.chat);
+      setMessages([]); // new chat = empty messages
+
+      return data.chat; // ⭐ Important
     } catch (error) {
       console.error(error);
+      return null;
     } finally {
       setLoading(false);
     }
   };
-  const sendMessage = (content) => {
-    if (!activeChat) {
-      console.warn("No active chat selected");
-      return;
+  const sendMessage = async (content) => {
+    let chat = activeChat;
+
+    // Agar active chat nahi hai to automatically create karo
+    if (!chat) {
+      chat = await handleCreateChat();
+
+      if (!chat) return;
     }
 
-    // User message UI me turant show hoga
+    // User message turant UI me dikhao
     setMessages((prev) => [
       ...prev,
       {
@@ -133,7 +141,7 @@ export const ChatProvider = ({ children }) => {
     setTyping(true);
 
     socket.emit("ai-message", {
-      chat: activeChat._id,
+      chat: chat._id,
       content,
     });
   };
