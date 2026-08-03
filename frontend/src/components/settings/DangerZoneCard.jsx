@@ -54,23 +54,23 @@ const DangerZoneCard = () => {
 
       <div className="mt-6 space-y-5">
         <div>
-          <label className="mb-2 block text-sm">Current Password</label>
+          <label className="mb-2 block text-sm text-zinc-400">Current Password</label>
 
           <input
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none"
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none text-white placeholder:text-zinc-500"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm">Type DELETE to confirm</label>
+          <label className="mb-2 block text-sm text-zinc-400">Type DELETE to confirm</label>
 
           <input
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none"
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none text-white placeholder:text-zinc-500"
           />
         </div>
 

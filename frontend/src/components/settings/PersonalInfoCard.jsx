@@ -33,7 +33,7 @@ const PersonalInfoCard = () => {
   return (
     <section className="rounded-3xl border border-zinc-800 bg-zinc-900 p-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold">Personal Information</h2>
+        <h2 className="text-2xl text-zinc-200 font-bold">Personal Information</h2>
 
         <p className="mt-2 text-sm text-zinc-400">
           Update your personal details.
@@ -44,7 +44,7 @@ const PersonalInfoCard = () => {
         {/* First Name */}
 
         <div>
-          <label className="mb-2 block text-sm font-medium">First Name</label>
+          <label className="mb-2 block text-sm font-medium text-zinc-400">First Name</label>
 
           <div className="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950 px-4">
             <User size={18} className="text-zinc-500" />
@@ -53,7 +53,7 @@ const PersonalInfoCard = () => {
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full bg-transparent py-3 outline-none"
+              className="w-full bg-transparent py-3 text-white outline-none placeholder:text-zinc-500"
             />
           </div>
         </div>
@@ -61,7 +61,7 @@ const PersonalInfoCard = () => {
         {/* Last Name */}
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Last Name</label>
+          <label className="mb-2 block text-sm font-medium text-zinc-400">Last Name</label>
 
           <div className="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950 px-4">
             <User size={18} className="text-zinc-500" />
@@ -70,7 +70,7 @@ const PersonalInfoCard = () => {
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full bg-transparent py-3 outline-none"
+              className="w-full bg-transparent py-3 text-white outline-none placeholder:text-zinc-500"
             />
           </div>
         </div>
@@ -78,7 +78,7 @@ const PersonalInfoCard = () => {
         {/* Email */}
 
         <div>
-          <label className="mb-2 block text-sm font-medium">
+          <label className="mb-2 block text-sm font-medium text-zinc-400">
             Email Address
           </label>
 

@@ -6,7 +6,7 @@ import { changePassword } from "../../services/auth.service";
 const PasswordInput = ({ label, value, onChange, show, setShow }) => {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-zinc-400">{label}</label>
 
       <div className="flex items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950 px-4">
         <Lock size={18} className="text-zinc-500" />
@@ -15,7 +15,7 @@ const PasswordInput = ({ label, value, onChange, show, setShow }) => {
           type={show ? "text" : "password"}
           value={value}
           onChange={onChange}
-          className="w-full bg-transparent py-3 outline-none"
+          className="w-full bg-transparent py-3 text-white outline-none placeholder:text-zinc-500"
         />
 
         <button
@@ -75,7 +75,7 @@ const PasswordCard = () => {
   return (
     <section className="rounded-3xl border border-zinc-800 bg-zinc-900 p-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold">Change Password</h2>
+        <h2 className="text-2xl font-bold text-zinc-200">Change Password</h2>
 
         <p className="mt-2 text-sm text-zinc-400">
           Update your account password.
@@ -89,6 +89,7 @@ const PasswordCard = () => {
           onChange={(e) => setCurrentPassword(e.target.value)}
           show={showCurrent}
           setShow={setShowCurrent}
+
         />
 
         <PasswordInput
