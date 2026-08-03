@@ -31,3 +31,10 @@ export async function changePassword(currentPassword, newPassword) {
 
   return data;
 }
+export async function deleteAccount() {
+  const { data } = await api.delete(
+    "/auth/delete-account"
+  );
+
+  return data;
+}
