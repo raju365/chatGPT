@@ -8,7 +8,7 @@ import PublicRoute from "./components/PublicRoute";
 import ForgotPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
-import Settings from "../pages/Settings";
+import Settings from "./pages/Settings";
 const AppRoutes = () => {
   return (
     <Routes>
