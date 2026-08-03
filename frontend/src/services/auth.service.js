@@ -23,3 +23,11 @@ export async function updateProfile(firstName, lastName) {
 
   return data;
 }
+export async function changePassword(currentPassword, newPassword) {
+  const { data } = await api.patch("/auth/change-password", {
+    currentPassword,
+    newPassword,
+  });
+
+  return data;
+}

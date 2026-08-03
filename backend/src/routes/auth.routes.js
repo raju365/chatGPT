@@ -23,9 +23,11 @@ router.post("/logout", authUser, authControllers.logoutUser);
 
 router.get("/me", authUser, authControllers.getMe);
 router.post("/forgot-password", authControllers.forgotPassword);
-router.post(
-  "/reset-password/:token",
-  authControllers.resetPassword
+router.post("/reset-password/:token", authControllers.resetPassword);
+router.patch("/profile", authMiddleware.authUser, authController.updateProfile);
+router.patch(
+  "/change-password",
+  authMiddleware.authUser,
+  authController.changePassword,
 );
-
 module.exports = router;
