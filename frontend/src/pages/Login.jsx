@@ -80,12 +80,14 @@ const Login = () => {
               Remember me
             </label>
 
-            <button
-              type="button"
-              className="text-violet-400 hover:text-violet-300"
-            >
-              Forgot Password?
-            </button>
+            <div className="mt-4 flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-violet-400 transition hover:text-violet-300"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </div>
 
           <Button type="submit" disabled={loading}>
