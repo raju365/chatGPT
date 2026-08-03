@@ -103,8 +103,10 @@ const UserMenu = ({ showChat = true }) => {
           )}
 
           <DropdownMenuItem>
-            <User size={18} />
-            Profile
+            <Link to="/profile" className="flex items-center gap-3">
+              <User size={18} />
+              Profile
+            </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem>

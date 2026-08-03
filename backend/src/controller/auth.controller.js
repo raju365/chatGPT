@@ -58,9 +58,10 @@ async function registerUser(req, res) {
     return res.status(201).json({
       message: "User registered successfully",
       user: {
+        id: user._id,
         email: user.email,
         fullName: user.fullName,
-        id: user._id,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {
@@ -117,9 +118,10 @@ async function loginUser(req, res) {
     return res.status(200).json({
       message: "User logged in successfully",
       user: {
+        id: user._id,
         email: user.email,
         fullName: user.fullName,
-        id: user._id,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {
@@ -228,10 +230,7 @@ async function resetPassword(req, res) {
     const { token } = req.params;
     const { newPassword } = req.body;
 
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await userModel.findOne({
       resetPasswordToken: hashedToken,
@@ -263,4 +262,11 @@ async function resetPassword(req, res) {
     });
   }
 }
-module.exports = { registerUser, loginUser, logoutUser, getMe, forgotPassword, resetPassword };
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getMe,
+  forgotPassword,
+  resetPassword,
+};
