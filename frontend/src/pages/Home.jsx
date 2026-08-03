@@ -38,21 +38,21 @@ const Home = () => {
   return (
     <main className="min-h-screen bg-zinc-950 text-white overflow-hidden">
       <div className="pointer-events-none absolute inset-0 -z-20">
-        <div className="absolute top-20 right-20 h-72 w-72 rounded-full bg-violet-500/10 blur-[120px]" />
+        <div className="absolute right-0 top-20 hidden h-72 w-72 rounded-full bg-violet-500/10 blur-[120px] md:block" />
 
-        <div className="absolute bottom-20 left-20 h-72 w-72 rounded-full bg-indigo-500/10 blur-[120px]" />
+        <div className="absolute bottom-20 left-0 hidden h-72 w-72 rounded-full bg-indigo-500/10 blur-[120px] md:block" />
       </div>
       {/* Background Glow */}
 
-      <div className="absolute top-0 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-violet-600/20 blur-[180px]" />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-[320px] -translate-x-1/2 rounded-full bg-violet-600/20 blur-[120px] md:h-[500px] md:w-[500px] md:blur-[180px]" />
 
       {/* Navbar */}
       <Navbar />
 
       {/* Hero */}
 
-      <section className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6">
-        <div className="grid w-full items-center gap-16 lg:grid-cols-2">
+      <section className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center overflow-hidden px-6">
+        <div className="grid w-full items-center gap-10 lg:grid-cols-2">
           {/* Left */}
 
           <div>
@@ -62,7 +62,7 @@ const Home = () => {
 
             <h1 className="mt-8 text-5xl font-black leading-tight lg:text-7xl">
               Your Intelligent
-              <span className="block bg-gradient-to-r from-violet-400 to-indigo-500 bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-violet-400 to-indigo-500 bg-clip-text text-transparent">
                 AI Assistant
               </span>
             </h1>
@@ -83,7 +83,7 @@ const Home = () => {
               </div>
             )}
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap gap-8 sm:flex-row sm:justify-center sm:items-center">
               <motion.div
                 whileHover={{ scale: 1.06, y: -3 }}
                 whileTap={{ scale: 0.96 }}
@@ -91,7 +91,7 @@ const Home = () => {
               >
                 <Link
                   to={ctaLink}
-                  className="rounded-2xl bg-violet-600 px-8 py-4 font-semibold transition hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-700/30"
+                  className="w-full rounded-2xl bg-violet-600 px-8 py-4 text-center font-semibold transition hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-700/30 sm:w-auto"
                 >
                   {ctaText}
                 </Link>
@@ -106,7 +106,7 @@ const Home = () => {
                   href="https://github.com/raju365/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-2xl border border-zinc-800 px-8 py-4 transition hover:border-violet-500 hover:bg-zinc-900 hover:text-white"
+                  className="w-full rounded-2xl border border-zinc-800 px-8 py-4 text-center transition hover:border-violet-500 hover:bg-zinc-900 hover:text-white sm:w-auto"
                 >
                   GitHub
                 </a>
@@ -117,7 +117,7 @@ const Home = () => {
           {/* Right */}
 
           <div
-            className="relative"
+            className="relative w-full overflow-hidden"
             initial={{
               opacity: 0,
               x: 80,
@@ -407,22 +407,22 @@ const Home = () => {
       >
         <div className="overflow-hidden rounded-[40px] border border-violet-500/20 bg-gradient-to-r from-violet-600 to-indigo-700 p-14 shadow-2xl shadow-violet-900/30">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-5xl font-black leading-tight">
+            <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">
               Ready to Experience
               <br />
               Oriv AI?
             </h2>
 
-            <p className="mt-6 text-lg text-violet-100">
+            <p className="mt-6 text-base leading-7 text-violet-100 sm:text-lg">
               Join thousands of users using Oriv AI for coding, writing,
               productivity and intelligent conversations.
             </p>
 
-            <div className="mt-10 flex flex-wrap justify-center gap-5">
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
               {isLoggedIn ? (
                 <Link
                   to="/chat"
-                  className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105"
+                  className="w-full rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105 sm:w-auto"
                 >
                   Continue Chat →
                 </Link>
@@ -430,14 +430,14 @@ const Home = () => {
                 <>
                   <Link
                     to="/register"
-                    className="rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105"
+                    className="w-full rounded-2xl bg-white px-8 py-4 font-semibold text-black transition hover:scale-105 sm:w-auto"
                   >
                     Get Started Free
                   </Link>
 
                   <Link
                     to="/login"
-                    className="rounded-2xl border border-white/30 px-8 py-4 transition hover:bg-white/10"
+                    className="w-full rounded-2xl border border-white/30 px-8 py-4 transition hover:bg-white/10 sm:w-auto"
                   >
                     Login
                   </Link>

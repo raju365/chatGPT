@@ -26,7 +26,7 @@ function initSocketServer(httpServer) {
   // Create Socket.IO server
   const io = new Server(httpServer, {
     cors: {
-      origin: ["http://localhost:5173", "https://your-frontend.vercel.app"],
+      origin: ["http://localhost:5173", "https://oriv-ai.vercel.app"],
       credentials: true,
     },
   });
