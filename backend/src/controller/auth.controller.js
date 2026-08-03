@@ -336,29 +336,38 @@ async function changePassword(req, res) {
 }
 async function deleteAccount(req, res) {
   try {
-    const userId = req.user._id;
+    const { currentPassword } = req.body;
 
-    // Delete all messages
+    if (!currentPassword) {
+      return res.status(400).json({
+        message: "Current password is required",
+      });
+    }
+
+    const user = await userModel.findById(req.user._id).select("+password");
+
+    const isMatch = await bycrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Current password is incorrect",
+      });
+    }
+
     await messageModel.deleteMany({
-      user: userId,
+      user: req.user._id,
     });
 
-    // Delete all chats
     await chatModel.deleteMany({
-      user: userId,
+      user: req.user._id,
     });
 
-    // Delete user
-    await userModel.findByIdAndDelete(userId);
+    await userModel.findByIdAndDelete(req.user._id);
 
-    // Clear cookie
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite:
-        process.env.NODE_ENV === "production"
-          ? "none"
-          : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     return res.status(200).json({

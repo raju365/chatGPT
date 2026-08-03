@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { Trash2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 import { deleteAccount } from "../../services/auth.service";
 import { useAuth } from "../../context/AuthContext";
 
 const DangerZoneCard = () => {
-  const [text, setText] = useState("");
+  const [confirmText, setConfirmText] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const { setUser } = useAuth();
@@ -15,16 +17,18 @@ const DangerZoneCard = () => {
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (text !== "DELETE") {
-      return toast.error(
-        "Type DELETE to confirm"
-      );
+    if (confirmText !== "DELETE") {
+      return toast.error("Please type DELETE to continue.");
+    }
+
+    if (!currentPassword) {
+      return toast.error("Current password is required.");
     }
 
     try {
       setLoading(true);
 
-      const data = await deleteAccount();
+      const data = await deleteAccount(currentPassword);
 
       toast.success(data.message);
 
@@ -34,10 +38,7 @@ const DangerZoneCard = () => {
         replace: true,
       });
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to delete account"
-      );
+      toast.error(error.response?.data?.message || "Failed to delete account");
     } finally {
       setLoading(false);
     }
@@ -45,35 +46,48 @@ const DangerZoneCard = () => {
 
   return (
     <section className="rounded-3xl border border-red-900 bg-zinc-900 p-8">
-      <h2 className="text-2xl font-bold text-red-500">
-        Danger Zone
-      </h2>
+      <h2 className="text-2xl font-bold text-red-500">Danger Zone</h2>
 
       <p className="mt-2 text-sm text-zinc-400">
-        Deleting your account is permanent and
-        cannot be undone.
+        Deleting your account is permanent. This action cannot be undone.
       </p>
 
-      <input
-        value={text}
-        onChange={(e) =>
-          setText(e.target.value)
-        }
-        placeholder="Type DELETE"
-        className="mt-6 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none"
-      />
+      <div className="mt-6 space-y-5">
+        <div>
+          <label className="mb-2 block text-sm">Current Password</label>
 
-      <button
-        onClick={handleDelete}
-        disabled={loading}
-        className="mt-6 flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 font-medium transition hover:bg-red-500 disabled:opacity-50"
-      >
-        <Trash2 size={18} />
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none"
+          />
+        </div>
 
-        {loading
-          ? "Deleting..."
-          : "Delete Account"}
-      </button>
+        <div>
+          <label className="mb-2 block text-sm">Type DELETE to confirm</label>
+
+          <input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none"
+          />
+        </div>
+
+        <button
+          onClick={handleDelete}
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-3 font-medium transition hover:bg-red-500 disabled:opacity-50"
+        >
+          {loading ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <Trash2 size={18} />
+          )}
+
+          {loading ? "Deleting..." : "Delete Account"}
+        </button>
+      </div>
     </section>
   );
 };
