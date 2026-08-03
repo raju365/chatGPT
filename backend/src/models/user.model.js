@@ -32,6 +32,13 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false, // Exclude password from query results by default
     },
+    resetPasswordToken: {
+      type: String,
+    },
+
+    resetPasswordExpire: {
+      type: Date,
+    },
   },
   // Automatically adds:
   // createdAt

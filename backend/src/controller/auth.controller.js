@@ -10,7 +10,7 @@
 const userModel = require("../models/user.model");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const crypto = require("crypto");
 /*
  * Register a new user
  */
@@ -160,4 +160,51 @@ async function getMe(req, res) {
     });
   }
 }
-module.exports = { registerUser, loginUser, logoutUser, getMe };
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const user = await userModel.findOne({
+      email,
+    });
+
+    // Security:
+    // Same response even if user doesn't exist.
+    if (!user) {
+      return res.status(200).json({
+        message: "If an account exists, a reset link will be sent.",
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+
+    user.resetPasswordExpire = Date.now() + 1000 * 60 * 15;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Reset token generated",
+      token: resetToken, // Temporary (testing only)
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+module.exports = { registerUser, loginUser, logoutUser, getMe, forgotPassword };
