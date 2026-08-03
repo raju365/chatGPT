@@ -11,6 +11,7 @@ const userModel = require("../models/user.model");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { sendResetPasswordEmail } = require("../service/mail.service");
 /*
  * Register a new user
  */
@@ -193,11 +194,26 @@ async function forgotPassword(req, res) {
 
     user.resetPasswordExpire = Date.now() + 1000 * 60 * 15;
 
-    await user.save();
+    await user.save({
+      validateBeforeSave: false,
+    });
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    try {
+      await sendResetPasswordEmail(user.email, resetLink);
+    } catch (err) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+
+      await user.save({
+        validateBeforeSave: false,
+      });
+
+      throw err;
+    }
 
     return res.status(200).json({
-      message: "Reset token generated",
-      token: resetToken, // Temporary (testing only)
+      message: "If an account exists, a reset link will be sent.",
     });
   } catch (error) {
     console.error(error);
