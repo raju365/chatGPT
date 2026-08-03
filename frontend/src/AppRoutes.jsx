@@ -6,6 +6,7 @@ import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import ForgotPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -36,6 +37,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
     </Routes>
   );
 };

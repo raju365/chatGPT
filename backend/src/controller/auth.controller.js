@@ -223,4 +223,44 @@ async function forgotPassword(req, res) {
     });
   }
 }
-module.exports = { registerUser, loginUser, logoutUser, getMe, forgotPassword };
+async function resetPassword(req, res) {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await userModel.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired token",
+      });
+    }
+
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save({
+      validateBeforeSave: false,
+    });
+
+    return res.status(200).json({
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+module.exports = { registerUser, loginUser, logoutUser, getMe, forgotPassword, resetPassword };
