@@ -1,16 +1,172 @@
-# React + Vite
+# 🚀 Key Features
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🤖 AI-Powered Conversations
 
-Currently, two official plugins are available:
+- Chat naturally with **Google Gemini AI**.
+- Human-like, fast, and context-aware responses.
+- Friendly AI personality (**Oriv AI**).
+- Real-time AI typing indicator.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🧠 Long-Term AI Memory
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Unlike a basic chatbot, Oriv AI remembers previous conversations.
 
-## Expanding the ESLint configuration
+- Semantic memory using **Pinecone Vector Database**
+- Context-aware responses
+- Smart memory retrieval
+- Personalized conversations
+- Better responses over time
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 💬 Chat Management
+
+Manage your conversations just like ChatGPT.
+
+- ✅ Create New Chat
+- ✅ Auto Chat Title Generation
+- ✅ Rename Chat
+- ✅ Delete Chat
+- ✅ Search Chats
+- ✅ Chat History
+
+---
+
+## ⚡ Real-Time Messaging
+
+Powered by **Socket.IO**
+
+- Instant AI responses
+- Live communication
+- Low latency messaging
+- Real-time typing experience
+
+---
+
+## 🔐 Secure Authentication
+
+Built with modern authentication practices.
+
+- User Registration
+- Secure Login
+- JWT Authentication
+- HTTP-only Cookies
+- Protected Routes
+- Secure Logout
+
+---
+
+## 🔑 Forgot Password
+
+Secure password recovery system.
+
+- Password Reset via Email
+- Resend Email Integration
+- Secure Reset Token
+- Token Expiration (15 Minutes)
+
+---
+
+## 👤 User Profile
+
+Manage your account easily.
+
+- View Profile
+- Update First Name
+- Update Last Name
+- View Email Address
+- Secure Profile Updates
+
+---
+
+## ⚙️ Account Settings
+
+Users can manage their account securely.
+
+- Change Password
+- Current Password Verification
+- Password Strength Validation
+- Show / Hide Password
+- Instant Success & Error Feedback
+
+---
+
+## 🎨 Beautiful User Interface
+
+Designed with a modern ChatGPT-inspired experience.
+
+- Dark Theme
+- Glassmorphism Effects
+- Smooth Animations
+- Responsive Layout
+- Mobile Friendly
+- Modern Sidebar
+- Interactive Components
+
+---
+
+## 📱 Fully Responsive
+
+Works seamlessly on all devices.
+
+- Desktop
+- Tablet
+- Mobile
+
+---
+
+## 🔍 Smart Search
+
+Quickly find previous conversations.
+
+- Search by Chat Title
+- Instant Filtering
+- Real-time Results
+
+---
+
+## 📧 Email Integration
+
+Powered by **Resend**
+
+- Password Reset Emails
+- Beautiful Email Template
+- Secure Email Delivery
+
+---
+
+## ☁️ Cloud Ready
+
+Production-ready architecture.
+
+- Frontend → Vercel
+- Backend → Render
+- MongoDB Atlas
+- Pinecone
+- Google Gemini API
+- Resend Email Service
+
+---
+
+## 🔒 Security
+
+Security has been considered throughout the project.
+
+- Password Hashing (bcrypt)
+- JWT Authentication
+- HTTP-only Cookies
+- Protected APIs
+- User Authorization
+- Secure Environment Variables
+
+---
+
+## 🚀 Performance Optimizations
+
+- Optimized React Rendering
+- Efficient Context Management
+- Responsive UI
+- Optimized API Calls
+- Vector Search for Fast Memory Retrieval
