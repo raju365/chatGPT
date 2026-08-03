@@ -110,8 +110,10 @@ const UserMenu = ({ showChat = true }) => {
           </DropdownMenuItem>
 
           <DropdownMenuItem>
-            <Settings size={18} />
-            Settings
+            <Link to="/settings" className="flex items-center gap-3">
+              <Settings size={18} />
+              Settings
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
